@@ -20,7 +20,6 @@ public:
   struct Obstacle {
     GLuint m_VAO{};
     GLuint m_VBO{};
-    std::list<glm::vec2> m_positions;
     GLfloat m_translation{0.0};
     bool destroy{false};
     glm::vec4 m_color{1};
@@ -29,17 +28,6 @@ public:
     float m_base{0.3f};
     GLfloat translationSpace{0.0001f};
     GLint m_translationLoc{};
-
-    std::list<glm::vec2> getVertices() {
-      std::list<glm::vec2> m_positionsTranslation;
-
-      for (auto const &pos : m_positions) {
-        int x = pos.x + m_translation;
-        m_positionsTranslation.push_back(glm::vec2{x, pos.y});
-      }
-
-      return m_positionsTranslation;
-    };
 
     glm::vec2 getCenter() {
       return glm::vec2{position.x + m_translation, position.y};

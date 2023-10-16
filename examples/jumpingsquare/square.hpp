@@ -10,7 +10,6 @@ public:
   void paint(GameData const &gameData);
   void destroy();
   void update(GameData const &gameData);
-  std::list<glm::vec2> getVertices();
   glm::vec2 getCenter();
 
   GLfloat translationSpace{0.0003f};
@@ -21,11 +20,8 @@ public:
 
 private:
   GLuint m_program{};
-  // GLint m_colorLoc{};
   GLuint m_VAO{};
   GLuint m_VBO{};
-  std::list<glm::vec2> m_positions;
-
   GLint m_translationLoc{};
 };
 #endif

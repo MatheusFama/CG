@@ -5,14 +5,14 @@
 void Window::onCreate() {
   auto const assetsPath{abcg::Application::getAssetsPath()};
 
-  // Load a new font
+  // Carregando fonte
   auto const filename{assetsPath + "Inconsolata-Medium.ttf"};
   m_font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
   if (m_font == nullptr) {
     throw abcg::RuntimeError("Cannot load font file");
   }
 
-  // Create program to render the other objects
+  // Programas para redenrizar objetos
   m_objectsProgram =
       abcg::createOpenGLProgram({{.source = assetsPath + "objects.vert",
                                   .stage = abcg::ShaderStage::Vertex},
@@ -37,7 +37,7 @@ void Window::onCreate() {
   abcg::glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 
-  // Start pseudo-random number generator
+  // Gerador de numeros aleatórios
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
 
@@ -56,7 +56,7 @@ void Window::restart() {
 
 void Window::onUpdate() {
 
-  // Wait 5 seconds before restarting
+  // Esperar 5s para reiniciar a partida
   if (m_gameData.m_state != State::Playing &&
       m_restartGameWaitTimer.elapsed() > 5) {
     restart();
@@ -139,9 +139,10 @@ void Window::onPaintUI() {
 }
 
 void Window::onEvent(SDL_Event const &event) {
+  // Enquanto square estiver no ar, não será possivel interagir
   if (m_gameData.m_input == Input::Up || m_gameData.m_input == Input::Down)
     return;
-  // Keyboard events
+  // Eventos de teclado
   if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
     m_gameData.m_input = Input::Up;
 }
@@ -178,6 +179,7 @@ void Window::checkCollisions() {
     bool collisionY =
         sqrCenter.y + 0.1f >= obsCenter.y && obsCenter.y + 0.1f >= sqrCenter.y;
 
+    // Caso haja colisão a partida será finalizada
     if (collisionX && collisionY) {
       m_gameData.m_state = State::GameOver;
       m_gameData.scoreTime = m_restartGameWaitTimer.elapsed();

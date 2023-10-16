@@ -15,7 +15,7 @@ void Ground::create(GLuint program) {
   };
 
 
-  // Generate VBO
+  //VBO
   abcg::glGenBuffers(1, &m_VBO);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
   abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions.data(),
@@ -23,13 +23,12 @@ void Ground::create(GLuint program) {
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
-  // Get location of attributes in the program
+  //Atributos no programa
   GLint positionAttribute{abcg::glGetAttribLocation(m_program, "inPosition")};
 
-  // Create VAO
+  //VAO
   abcg::glGenVertexArrays(1, &m_VAO);
 
-  // Bind vertex attributes to current VAO
   abcg::glBindVertexArray(m_VAO);
 
   abcg::glEnableVertexAttribArray(positionAttribute);
@@ -38,8 +37,6 @@ void Ground::create(GLuint program) {
                               nullptr);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
-  // End of binding to current VAO
   abcg::glBindVertexArray(0);
 }
 

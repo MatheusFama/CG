@@ -10,7 +10,7 @@ void Obstacles::create(GLuint program) {
   m_program = program;
 
   randomTime = m_randomDist(m_randomEngine);
-  // Cleaning obstacles
+
   m_obstacles.clear();
 }
 
@@ -72,25 +72,20 @@ Obstacles::Obstacle Obstacles::makeObstacle() {
 
   };
 
-  obstacle.m_positions.push_back(positions[0]);
-  obstacle.m_positions.push_back(positions[1]);
-  obstacle.m_positions.push_back(positions[2]);
-
-  // Generate VBO
+  // VBO
   abcg::glGenBuffers(1, &obstacle.m_VBO);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, obstacle.m_VBO);
   abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions.data(),
                      GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // Get location of attributes in the program
+  // Atributos
   auto const positionAttribute{
       abcg::glGetAttribLocation(m_program, "inPosition")};
 
-  // Create VAO
+  // VAO
   abcg::glGenVertexArrays(1, &obstacle.m_VAO);
 
-  // Bind vertex attributes to current VAO
   abcg::glBindVertexArray(obstacle.m_VAO);
 
   abcg::glBindBuffer(GL_ARRAY_BUFFER, obstacle.m_VBO);
@@ -99,7 +94,6 @@ Obstacles::Obstacle Obstacles::makeObstacle() {
                               nullptr);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // End of binding to current VAO
   abcg::glBindVertexArray(0);
 
   return obstacle;

@@ -1,7 +1,7 @@
 # JumpingSquare
 
 ## Descrição
-* JumpingSquare é um jogo inspirado no famoso "Chrome Dino" onde o objetivo é sobreviver o maior tempo possível desviando dos obstáculos. Neste jogo, a mecânica é mantida simples, com o uso de formas geométricas simples, como quadrados e triângulos.
+* JumpingSquare é um jogo inspirado no famoso "Chrome Dino" onde o objetivo é sobreviver o maior tempo possível desviando dos obstáculos. Neste jogo, a mecânica é mantida simples, com o uso de formas geométricas primárias, como quadrados e triângulos.
 
 ### Chrome Dino
 <table>
@@ -23,92 +23,133 @@
 </table>
 
 
-## Requirements
+## Organização do Projeto
+O projeto foi separado nas seguintes classes:
 
-The following minimum requirements are shared among all platforms:
+* Square: classe que representará o personagem.
+* Obstacle: classe responsável por gerenciar os obstáculos.
+* GameData: clase responsável por gerenciar o estado do jogo.
+* Ground : classe que representa o terreno.
 
-*   [CMake](https://cmake.org/) 3.21.
-*   A C++ compiler with at least partial support for C++20 (tested with GCC 12, Clang 16, MSVC 17, and emcc 3.1.42).
-*   A system with support for OpenGL 3.3 (OpenGL backend) or Vulkan 1.3 (Vulkan backend). Conformant software rasterizers such as Mesa's [Gallium llvmpipe](https://docs.mesa3d.org/drivers/llvmpipe.html) and lavapipe (post Jun 2022) are supported. Mesa's [D3D12](https://devblogs.microsoft.com/directx/directx-heart-linux/) backend on [WSL 2.0](https://docs.microsoft.com/en-us/windows/wsl/install) is supported as well.
 
-For WebAssembly:
+### Organização dos arquivos
+<code>jumpingsquare/
+│   square.cpp
+│   square.hpp
+│   ground.cpp
+│   ground.hpp
+│   obstacle.cpp
+│   obstacle.hpp
+│   CMakeLists.txt
+│   gamedata.hpp
+│   main.cpp
+│   window.hpp
+│   window.cpp
+│
+└───assets/
+    │   Inconsolata-Medium.ttf
+    │   ground.frag
+    │   ground.vert
+    │   objects.frag
+    │   objects.vert
+    │   obstacle.frag
+    └   obstacle.vert</code>
 
-*   [Emscripten](https://emscripten.org/).
-*   A browser with support for WebGL 2.0.
+### Cenário
+O cenário do jogo será formado pelos seguintes objetos:
+* O personagem square formado por GL_TRIANGLES;
+* Obstáculos formados por GL_TRIANGLES;
+* Terreno formado por GL_LINE_STRIP;
 
-For building desktop applications:
+### main.hpp
+Construção padrão da classe main vista em aula.
+<code>
+  #ifndef WINDOW_HPP_
+#define WINDOW_HPP_
 
-*   [SDL](https://www.libsdl.org/) 2.0.
-*   [SDL\_image](https://www.libsdl.org/projects/SDL_image/) 2.0.
-*   [GLEW](http://glew.sourceforge.net/) 2.2.0 (required for OpenGL-based applications).
-*   [Vulkan](https://www.lunarg.com/vulkan-sdk/) 1.3 (required for Vulkan-based applications).
+#include <random>
 
-Desktop dependencies can be resolved automatically with [Conan](https://conan.io/), but it is disabled by default. To use Conan, install Conan 1.47 or a later 1.\* version (ABCg is not compatible with Conan 2.0!) and then configure CMake with `-DENABLE_CONAN=ON`.
+#include "abcgOpenGL.hpp"
 
-The default renderer backend is OpenGL (CMake option `GRAPHICS_API=OpenGL`). To use the Vulkan backend, configure CMake with `-DGRAPHICS_API=Vulkan`.
+#include "ground.hpp"
+#include "obstacles.hpp"
+#include "square.hpp"
 
-***
+class Window : public abcg::OpenGLWindow {
+protected:
+  void onEvent(SDL_Event const &event) override;
+  void onCreate() override;
+  void onUpdate() override;
+  void onPaint() override;
+  void onPaintUI() override;
+  void onResize(glm::ivec2 const &size) override;
+  void onDestroy() override;
+  void checkCollisions();
 
-## Installation and usage
+private:
+  glm::ivec2 m_viewportSize{};
 
-Start by cloning the repository:
+  GLuint m_objectsProgram{};
+  GLuint m_obstaclesProgram{};
+  GLuint m_groundProgram{};
 
-    # Get abcg repo
-    git clone https://github.com/hbatagelo/abcg.git
+  GameData m_gameData;
 
-    # Enter the directory
-    cd abcg
+  Ground m_ground;
 
-Follow the instructions below to build the "Hello, World!" sample located in `abcg/examples/helloworld`.
+  Square m_square;
 
-### Windows
+  Obstacles m_obstacles;
 
-*   Run `build-vs.bat` for building with the Visual Studio 2022 toolchain.
-*   Run `build.bat` for building with GCC (MinGW-w64).
+  abcg::Timer m_restartWaitTimer;
+  abcg::Timer m_restartGameWaitTimer;
 
-`build-vs.bat` and `build.bat` accept two optional arguments: (1) the build type, which is `Release` by default, and (2) an extra CMake option. For example, for a `Debug` build with `-DENABLE_CONAN=ON` using VS 2022, run
+  float randomTime{0.0};
 
-    build-vs.bat Debug -DENABLE_CONAN=ON
+  ImFont *m_font{};
 
-### Linux and macOS
+  std::default_random_engine m_randomEngine;
 
-Run `./build.sh`.
+  std::uniform_real_distribution<float> m_randomDist{1.0f, 5.0f};
 
-The script accepts two optional arguments: (1) the build type, which is `Release` by default, and (2) an extra CMake option. For example, for a `Debug` build with `-DENABLE_CONAN=ON`, run
+  void restart();
+};
 
-    ./build.sh Debug -DENABLE_CONAN=ON
+#endif
+</code>
+### gamedata.hpp
 
-### WebAssembly
+Estrutura que define o estado atual do jogo.
 
-1.  Run `build-wasm.bat` (Windows) or `./build-wasm.sh` (Linux/macOS).
-2.  Run `runweb.bat` (Windows) or `./runweb.sh` (Linux/macOS) for setting up a local web server.
-3.  Open <http://localhost:8080/helloworld.html>.
+  <code>
+  #ifndef GAMEDATA_HPP_
+  #define GAMEDATA_HPP_
+  
+  #include <bitset>
+  
+  enum class Input { Idle, Up, Down };
+  enum class State { Playing, GameOver };
+  struct GameData {
+    State m_state{State::Playing};
+    Input m_input{Input::Idle};
+    GLfloat maxHigh{0.8f};
+    GLfloat minHigh{0.0f};
+    float scoreTime;
+  };
+  
+  #endif
+  </code>
+* m_state pode ser:
+  * State::Playing: a aplicação está em modo de jogo, com o square respondendo aos comandos do jogador;
+  * State::GameOver: o jogador perdeu. Nesse caso, square não é exibido e não responde aos comandos do jogador;
+* m_input pode ser:
+  * Input::Idle : o jogador não realizou nenhuma ação enquanto square está no chão.
+  * Input::Up : o jogador pulou com square.
+  * Input::Down : square está descendo.
+* scoreTime : Representa o tempo feito pelo jogador.
+* maxHig,minHigh: Altura máxima e minima alcançada por square.
 
-***
-
-## Docker setup
-
-ABCg can be built in a [Docker](https://www.docker.com/) container. The Dockerfile provided is based on Ubuntu 22.04 and includes Emscripten.
-
-1.  Create the Docker image (`abcg`):
-
-        sudo docker build -t abcg .
-
-2.  Create the container (`abcg_container`):
-
-        sudo docker create -it \
-          -p 8080:8080 \
-          -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-          -e DISPLAY \
-          --name abcg_container abcg
-
-3.  Start the container:
-
-        sudo docker start -ai abcg_container
-
-    On NVIDIA GPUs, install the [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) to allow the container to use the host's NVIDIA driver and X server. Expose the X server with `sudo xhost +local:root` before starting the container.
-
-***
+### square.hpp
 
 ## License
 

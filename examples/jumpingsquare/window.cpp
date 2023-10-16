@@ -1,4 +1,6 @@
 #include "window.hpp"
+#include "iostream"
+#include "string"
 
 void Window::onCreate() {
   auto const assetsPath{abcg::Application::getAssetsPath()};
@@ -89,7 +91,7 @@ void Window::onPaint() {
   abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
 
   m_square.paint(m_gameData);
-  m_obstacles.paint();
+  m_obstacles.paint(m_gameData);
   m_ground.paint();
 }
 
@@ -97,11 +99,23 @@ void Window::onPaintUI() {
   abcg::OpenGLWindow::onPaintUI();
 
   {
-    auto const size{ImVec2(300, 85)};
+    auto const size{ImVec2(300, 125)};
     auto const position{ImVec2((m_viewportSize.x - size.x) / 2.0f,
                                (m_viewportSize.y - size.y) / 2.0f)};
-    ImGui::SetNextWindowPos(position);
-    ImGui::SetNextWindowSize(size);
+
+    auto const sizePlaying{ImVec2(300, 85)};
+    auto const positionPlaying{
+        ImVec2((m_viewportSize.x - size.x), (m_viewportSize.y - size.y))};
+    ImGui::GetIO().FontGlobalScale = 0.5f;
+
+    if (m_gameData.m_state == State::Playing) {
+      ImGui::SetNextWindowPos(positionPlaying);
+      ImGui::SetNextWindowSize(sizePlaying);
+    } else {
+      ImGui::SetNextWindowPos(position);
+      ImGui::SetNextWindowSize(size);
+    }
+
     ImGuiWindowFlags const flags{ImGuiWindowFlags_NoBackground |
                                  ImGuiWindowFlags_NoTitleBar |
                                  ImGuiWindowFlags_NoInputs};
@@ -109,7 +123,15 @@ void Window::onPaintUI() {
     ImGui::PushFont(m_font);
 
     if (m_gameData.m_state == State::GameOver) {
-      ImGui::Text("Game Over!");
+      std::string gameOverStr =
+          "Tempo: " + std::to_string(m_gameData.scoreTime) + "s";
+      ImGui::TextWrapped("Game Over!");
+      ImGui::TextWrapped(gameOverStr.c_str());
+
+    } else {
+      std::string timeStr =
+          "Tempo: " + std::to_string(m_restartGameWaitTimer.elapsed());
+      ImGui::Text(timeStr.c_str());
     }
 
     ImGui::PopFont();
@@ -159,6 +181,7 @@ void Window::checkCollisions() {
 
     if (collisionX && collisionY) {
       m_gameData.m_state = State::GameOver;
+      m_gameData.scoreTime = m_restartGameWaitTimer.elapsed();
       m_restartGameWaitTimer.restart();
     }
   }

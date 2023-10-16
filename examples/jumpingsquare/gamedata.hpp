@@ -10,6 +10,7 @@ struct GameData {
   Input m_input{Input::Idle};
   GLfloat maxHigh{0.8f};
   GLfloat minHigh{0.0f};
+  float scoreTime;
 };
 
 #endif

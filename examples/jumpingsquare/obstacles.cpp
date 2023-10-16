@@ -14,7 +14,9 @@ void Obstacles::create(GLuint program) {
   m_obstacles.clear();
 }
 
-void Obstacles::paint() {
+void Obstacles::paint(GameData const &gameData) {
+  if (gameData.m_state != State::Playing)
+    return;
 
   abcg::glUseProgram(m_program);
 

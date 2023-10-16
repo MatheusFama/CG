@@ -12,7 +12,7 @@
 class Obstacles {
 public:
   void create(GLuint program);
-  void paint();
+  void paint(GameData const &gameData);
   void destroy();
   void update();
   abcg::Timer m_restartWaitTimer;

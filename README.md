@@ -6,6 +6,14 @@
 ### Chrome Dino
 ![Imagem Chrome Dino](https://github.com/MatheusFama/CG-Assets/blob/main/ChronoDino.jpeg)
 
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/MatheusFama/CG-Assets/blob/main/ChronoDino.jpeg" width="300">
+    </td>
+  </tr>
+</table>
+
 ### Jumping Square
 ![Imagem Jumping Square](https://github.com/MatheusFama/CG-Assets/blob/main/jumpingSquare.png)
 

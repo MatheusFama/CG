@@ -59,7 +59,6 @@ void Window::onUpdate() {
   // Wait 5 seconds before restarting
   if (m_gameData.m_state != State::Playing &&
       m_restartGameWaitTimer.elapsed() > 5) {
-    fmt::print("caiu depois State: {}\n", static_cast<int>(m_gameData.m_state));
     restart();
     return;
   }

@@ -5,7 +5,14 @@ JumpingSquare é um jogo inspirado no famoso "Chrome Dino" onde o objetivo é so
 
 <p></p>
 <p></p>
-
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
 ![Imagem Chrome Dino](https://github.com/MatheusFama/CG-Assets/blob/main/ChronoDino.jpeg)
 
 

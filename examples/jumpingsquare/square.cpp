@@ -65,11 +65,11 @@ void Square::paint(const GameData &gameData) {
 void Square::update(GameData const &gameData, float deltaTime) {
 
   if (gameData.m_input == Input::Up) {
-    m_translation += (0.8) / 0.5 * deltaTime;
+    m_translation += (jumpDistance) / jumpTime * deltaTime;
   }
 
   if (gameData.m_input == Input::Down) {
-    m_translation -= (0.8) / 0.5 * deltaTime;
+    m_translation -= (jumpDistance) / fallTime * deltaTime;
   }
 
   if (gameData.m_input == Input::Idle) {

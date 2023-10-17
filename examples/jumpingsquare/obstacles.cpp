@@ -34,10 +34,10 @@ void Obstacles::update(float deltaTime) {
   // moving obstacles
   for (auto &obstacle : m_obstacles) {
 
-    obstacle.m_translation -= (5.5) / 3 * deltaTime;
+    obstacle.m_translation -= (maxDistance) / distanceTime * deltaTime;
 
     // verificar se o obstaculo saiu da tela
-    if (obstacle.m_translation < -5.5f) {
+    if (obstacle.m_translation < maxDistance * (-1)) {
       obstacle.remove = true;
       obstacle.destroy();
     }

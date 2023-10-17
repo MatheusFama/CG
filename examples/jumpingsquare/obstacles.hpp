@@ -16,7 +16,8 @@ public:
   void destroy();
   void update(float deltaTime);
   abcg::Timer m_restartWaitTimer;
-
+  GLfloat maxDistance{5.5};
+  GLfloat distanceTime{3};
   struct Obstacle {
     GLuint m_VAO{};
     GLuint m_VBO{};

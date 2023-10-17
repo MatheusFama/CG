@@ -17,6 +17,9 @@ public:
   glm::vec4 m_color{1};
   glm::vec2 position{-0.85f, 0.03f};
   GLfloat size{0.1f};
+  GLfloat jumpDistance{0.8f};
+  GLfloat jumpTime{0.4};
+  GLfloat fallTime{0.35};
 
 private:
   GLuint m_program{};

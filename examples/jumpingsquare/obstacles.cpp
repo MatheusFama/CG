@@ -73,6 +73,9 @@ Obstacles::Obstacle Obstacles::makeObstacle() {
                      GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+  obstacle.m_translationLoc =
+      abcg::glGetUniformLocation(m_program, "inTranslation");
+
   // Atributos
   auto const positionAttribute{
       abcg::glGetAttribLocation(m_program, "inPosition")};

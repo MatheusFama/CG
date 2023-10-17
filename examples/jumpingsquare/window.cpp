@@ -124,13 +124,14 @@ void Window::onPaintUI() {
     ImGui::PushFont(m_font);
 
     if (m_gameData.m_state == State::GameOver) {
-      const auto gameOverStr = fmt::format("Temp: {} s", m_gameData.scoreTime);
+      const auto gameOverStr =
+          fmt::format("Tempo: {:.2f}s", m_gameData.scoreTime);
       ImGui::TextWrapped("Game Over!");
       ImGui::TextWrapped(gameOverStr.c_str());
 
     } else {
       const auto timeStr =
-          fmt::format("Tempo: {}", m_restartGameWaitTimer.elapsed());
+          fmt::format("Tempo: {:.2f}s", m_restartGameWaitTimer.elapsed());
       ImGui::Text(timeStr.c_str());
     }
 

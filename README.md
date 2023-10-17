@@ -1,4 +1,6 @@
 # JumpingSquare
+* Nome: Matheus Fama
+* RA: 11040615
   
 ## Descrição
 * JumpingSquare é um jogo inspirado no famoso "Chrome Dino" onde o objetivo é sobreviver o maior tempo possível desviando dos obstáculos. Neste jogo, a mecânica é mantida simples, com o uso de formas geométricas primárias, como quadrados e triângulos.
@@ -123,6 +125,72 @@ Construção padrão da classe main vista em aula.
   </code>
 </pre>
 
+### window.hpp
+<pre>
+  <code>
+  #ifndef WINDOW_HPP_
+#define WINDOW_HPP_
+
+#include <random>
+
+#include "abcgOpenGL.hpp"
+
+#include "ground.hpp"
+#include "obstacles.hpp"
+#include "square.hpp"
+
+class Window : public abcg::OpenGLWindow {
+protected:
+  void onEvent(SDL_Event const &event) override;
+  void onCreate() override;
+  void onUpdate() override;
+  void onPaint() override;
+  void onPaintUI() override;
+  void onResize(glm::ivec2 const &size) override;
+  void onDestroy() override;
+  void checkCollisions();
+
+private:
+  glm::ivec2 m_viewportSize{};
+
+  GLuint m_objectsProgram{};
+  GLuint m_obstaclesProgram{};
+  GLuint m_groundProgram{}
+  GameData m_gameData;
+  Ground m_ground;
+  Square m_square;
+  Obstacles m_obstacles;
+  abcg::Timer m_restartWaitTimer;
+  abcg::Timer m_restartGameWaitTimer;
+  ImFont *m_font{};
+  float randomTime{0.0};
+  std::default_random_engine m_randomEngine;
+  std::uniform_real_distribution<float> m_randomDist{0.5f, 4.5f};
+
+  void restart();
+};
+
+#endif
+  </code>
+</pre>
+  * glm::ivec2 m_viewportSize : indica o tamanaho da view port.
+  * GLuint m_objectsProgram: programa que será utilizado em square.
+  * GLuint m_obstaclesProgram: programa que será utilizando em obstacle.
+  * GLuint m_groundProgram: programa que será utilizando em ground.
+  * GameData m_gameData : Para gerenciar o estado do jogo, utilizaremos uma instancia de GameData.
+  * Ground m_ground: Referência para ground.
+  * Square m_square: Referência para square.
+  * Obstacles m_obstacles: Referência para obstacles.
+  * abcg::Timer m_restartWaitTimer: Timer que utilizado para indicar quando será criado o proximo obstaculo.
+  * abcg::Timer m_restartGameWaitTimer: Timer que utilizado para contar a quantidade de tempo feita pelo jogador e para reiniciar a partida.
+  * ImFont *m_font: fonte que será utilizada no jogo.
+  * float randomTime: Referência para armazenar o resultado final do jogador.
+  * std::default_random_engine m_randomEngine: Seed para aleatorizar quando será gerado o próximo obstáculo.
+  * std::uniform_real_distribution<float> m_randomDist: Distribuição para determinar quando será gerado o proximo obstáculo.
+  * void restart(): método utilizado para configurar o inicio de cada partida.
+  * void checkCollisions() : método utilizado para checar colisões entre obstáculos e square.
+
+
 ### gamedata.hpp
 
 Estrutura que define o estado atual do jogo.
@@ -159,7 +227,8 @@ Estrutura que define o estado atual do jogo.
 ### square.hpp
 Personagem utilizado pelo jogador.
 <pre>
-<code>#ifndef SQUARE_HPP_
+<code>
+#ifndef SQUARE_HPP_
 #define SQUARE_HPP_
 
 #include "abcgOpenGL.hpp"
@@ -170,14 +239,16 @@ public:
   void create(GLuint program);
   void paint(GameData const &gameData);
   void destroy();
-  void update(GameData const &gameData);
+  void update(GameData const &gameData, float deltaTime);
   glm::vec2 getCenter();
 
-  GLfloat translationSpace{0.0003f};
   GLfloat m_translation{0.0};
   glm::vec4 m_color{1};
   glm::vec2 position{-0.85f, 0.03f};
   GLfloat size{0.1f};
+  GLfloat jumpDistance{0.8f};
+  GLfloat jumpTime{0.4};
+  GLfloat fallTime{0.35};
 
 private:
   GLuint m_program{};
@@ -185,17 +256,27 @@ private:
   GLuint m_VBO{};
   GLint m_translationLoc{};
 };
-#endif</code></pre>
-  * glm::vec2 getCenter : Função que devolve o ponto central do personagem
-  * GLfloat translationSpace : Espaço de deslocamento realizado pelo personagem
-  * glm::vec2 position : Posição inicial
-  * GLfloat size : tamanho
+#endif
+
+</code>
+</pre>
+
+* glm::vec2 getCenter: Método que retorna o centro atual do objeto.
+* GLfloat m_translation: Referência para guardar a alteração da posição do objeto.
+* glm::vec2 position: Posição inicial.
+* GLfloat size: Tamanho do objeto.
+* GLfloat jumpDistance: Distância máxima de pulo.
+* GLfloat jumpTime: Tempo de subida do pulo.
+* GLfloat fallTime: Tempo de descida do pulo.
+* GLint m_translationLoc: Referência para a variável m_translation que estará na GPU.
+  
 
 ### obstacles.hpp
 
-Classe que gerencia os obstáculos. No caso, os obstáculos são gerados em um espaço de tempo aleatório e destruídos assim que saem da tela.
+Classe que gerencia os obstáculos. No caso, os obstáculos são gerados em um espaço de tempo aleatório e destruídos assim que percorrerem um determinado espaço da tela.
 <pre>
-<code>#ifndef OBSTACLE_HPP_
+<code>
+  #ifndef OBSTACLE_HPP_
 #define OBSTACLE_HPP_
 
 #include <list>
@@ -211,23 +292,28 @@ public:
   void create(GLuint program);
   void paint(GameData const &gameData);
   void destroy();
-  void update();
-  abcg::Timer m_restartWaitTimer;
-
+  void update(float deltaTime);
+  GLfloat maxDistance{5.5};
+  GLfloat distanceTime{3};
   struct Obstacle {
     GLuint m_VAO{};
     GLuint m_VBO{};
     GLfloat m_translation{0.0};
-    bool destroy{false};
+    bool remove{false};
     glm::vec4 m_color{1};
     glm::vec2 position{0.99f, 0.08f};
     float m_height{0.2f};
     float m_base{0.3f};
-    GLfloat translationSpace{0.0001f};
+    //GLfloat translationSpace{0.0001f};
     GLint m_translationLoc{};
 
     glm::vec2 getCenter() {
       return glm::vec2{position.x + m_translation, position.y};
+    };
+
+    void destroy() {
+      abcg::glDeleteBuffers(1, &m_VBO);
+      abcg::glDeleteVertexArrays(1, &m_VAO);
     };
   };
 
@@ -237,16 +323,24 @@ public:
 
 private:
   GLuint m_program{};
-  // GLint m_translationLoc{};
-
-  std::default_random_engine m_randomEngine;
-  float randomTime{0.0};
-  std::uniform_real_distribution<float> m_randomDist{1.0f, 10.0f};
 };
 
-#endif</code></pre>
+#endif
+</code>
+</pre>
 
-* td::list<Obstacle> m_obstacles : Lista que gerencia os obstáculos.
-* abcg::Timer m_restartWaitTimer : Timer que gerencia quando irá ser criado o próximo obstáculo
-* Obstacle makeObstacle(): Função que cria um novo obstáculo.
+  * GLfloat maxDistance: Distância máxima que será percorrida por cada obstáculo antes de ser destruído.
+  * GLfloat distanceTime: Tempo que será utilizado para o obstáculo percorrer a distância.
+  * A estrutura Obstacle será composta por:
+    * Obstacle:: GLfloat m_translation: Referência para guardar a alteração da posição do obstacle.
+    * Obstacle:: bool remove: Flag utilizada para marcar quais obstáculos serão destruídos.
+    * Obstacle:: glm::vec2 position: Posição inicial.
+    * Obstacle:: float m_height: Tamanho da altura do obstáculo.
+    * Obstacle:: float m_base: Tamanho da base do obstáculo. 
+    * Obstacle:: GLint m_translationLoc: Referência para a variável m_translation que estará na GPU.
+    * Obstacle:: glm::vec2 getCenter():  Método que retorna a posiçao atual do centro do objeto.
+    * Obstacle:: void destroy() : Destrói o obstáculo.
 
+  * std::list<Obstacle> m_obstacles : Lista utilizada para gerenciar os obstáculos.
+  * Obstacle makeObstacle(): Método utilizado para criar um novo obstáculo.
+  * void destroy(): Destrói todos os obstáculos.

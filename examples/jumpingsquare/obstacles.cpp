@@ -4,12 +4,7 @@
 void Obstacles::create(GLuint program) {
   destroy();
 
-  m_randomEngine.seed(
-      std::chrono::steady_clock::now().time_since_epoch().count());
-
   m_program = program;
-
-  randomTime = m_randomDist(m_randomEngine);
 
   m_obstacles.clear();
 }
@@ -34,28 +29,27 @@ void Obstacles::paint(GameData const &gameData) {
   abcg::glUseProgram(0);
 }
 
-void Obstacles::update() {
+void Obstacles::update(float deltaTime) {
 
   // moving obstacles
   for (auto &obstacle : m_obstacles) {
-    obstacle.m_translation -= obstacle.translationSpace;
+
+    obstacle.m_translation -= (5.5) / 3 * deltaTime;
 
     // verificar se o obstaculo saiu da tela
     if (obstacle.m_translation < -5.5f) {
-      obstacle.destroy = true;
-
-      abcg::glDeleteBuffers(1, &obstacle.m_VBO);
-      abcg::glDeleteVertexArrays(1, &obstacle.m_VAO);
+      obstacle.remove = true;
+      obstacle.destroy();
     }
   }
 
-  m_obstacles.remove_if([](auto &obstacle) { return obstacle.destroy; });
+  m_obstacles.remove_if([](auto &obstacle) { return obstacle.remove; });
 }
 
 void Obstacles::destroy() {
   for (auto &obstacle : m_obstacles) {
-    abcg::glDeleteBuffers(1, &obstacle.m_VBO);
-    abcg::glDeleteVertexArrays(1, &obstacle.m_VAO);
+    obstacle.remove = true;
+    obstacle.destroy();
   }
 }
 

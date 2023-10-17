@@ -9,7 +9,7 @@ public:
   void create(GLuint program);
   void paint(GameData const &gameData);
   void destroy();
-  void update(GameData const &gameData);
+  void update(GameData const &gameData, float deltaTime);
   glm::vec2 getCenter();
 
   GLfloat translationSpace{0.0003f};

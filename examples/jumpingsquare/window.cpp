@@ -1,7 +1,7 @@
 #include "window.hpp"
+#include "fmt/format.h"
 #include "iostream"
 #include "string"
-
 void Window::onCreate() {
   auto const assetsPath{abcg::Application::getAssetsPath()};
 
@@ -47,6 +47,7 @@ void Window::onCreate() {
 }
 
 void Window::restart() {
+  m_restartGameWaitTimer.restart();
   m_gameData.m_state = State::Playing;
 
   m_square.create(m_objectsProgram);
@@ -55,6 +56,7 @@ void Window::restart() {
 }
 
 void Window::onUpdate() {
+  auto const deltaTime{gsl::narrow_cast<float>(getDeltaTime())};
 
   // Esperar 5s para reiniciar a partida
   if (m_gameData.m_state != State::Playing &&
@@ -77,8 +79,8 @@ void Window::onUpdate() {
     m_obstacles.m_obstacles.push_back(m_obstacles.makeObstacle());
   }
 
-  m_square.update(m_gameData);
-  m_obstacles.update();
+  m_obstacles.update(deltaTime);
+  m_square.update(m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
     checkCollisions();
@@ -122,14 +124,13 @@ void Window::onPaintUI() {
     ImGui::PushFont(m_font);
 
     if (m_gameData.m_state == State::GameOver) {
-      std::string gameOverStr =
-          "Tempo: " + std::to_string(m_gameData.scoreTime) + "s";
+      const auto gameOverStr = fmt::format("Temp: {} s", m_gameData.scoreTime);
       ImGui::TextWrapped("Game Over!");
       ImGui::TextWrapped(gameOverStr.c_str());
 
     } else {
-      std::string timeStr =
-          "Tempo: " + std::to_string(m_restartGameWaitTimer.elapsed());
+      const auto timeStr =
+          fmt::format("Tempo: {}", m_restartGameWaitTimer.elapsed());
       ImGui::Text(timeStr.c_str());
     }
 
@@ -174,10 +175,13 @@ void Window::checkCollisions() {
     obsCenter = obstacle.getCenter();
 
     bool collisionX =
-        sqrCenter.x + 0.1f >= obsCenter.x && obsCenter.x + 0.1f >= sqrCenter.x;
+        sqrCenter.x + m_square.size >= obsCenter.x &&
+        obsCenter.x + obstacle.m_base / (10 * obstacle.m_base) >= sqrCenter.x;
 
     bool collisionY =
-        sqrCenter.y + 0.1f >= obsCenter.y && obsCenter.y + 0.1f >= sqrCenter.y;
+        sqrCenter.y + m_square.size >= obsCenter.y &&
+        obsCenter.y + obstacle.m_height / (10 * obstacle.m_height) >=
+            sqrCenter.y;
 
     // Caso haja colisão a partida será finalizada
     if (collisionX && collisionY) {

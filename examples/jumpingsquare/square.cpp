@@ -62,13 +62,14 @@ void Square::paint(const GameData &gameData) {
   abcg::glUseProgram(0);
 }
 
-void Square::update(GameData const &gameData) {
+void Square::update(GameData const &gameData, float deltaTime) {
 
-  if (gameData.m_input == Input::Up)
-    m_translation += translationSpace;
+  if (gameData.m_input == Input::Up) {
+    m_translation += (0.8) / 0.5 * deltaTime;
+  }
 
   if (gameData.m_input == Input::Down) {
-    m_translation -= translationSpace;
+    m_translation -= (0.8) / 0.5 * deltaTime;
   }
 
   if (gameData.m_input == Input::Idle) {

@@ -14,14 +14,14 @@ public:
   void create(GLuint program);
   void paint(GameData const &gameData);
   void destroy();
-  void update();
+  void update(float deltaTime);
   abcg::Timer m_restartWaitTimer;
 
   struct Obstacle {
     GLuint m_VAO{};
     GLuint m_VBO{};
     GLfloat m_translation{0.0};
-    bool destroy{false};
+    bool remove{false};
     glm::vec4 m_color{1};
     glm::vec2 position{0.99f, 0.08f};
     float m_height{0.2f};
@@ -32,6 +32,11 @@ public:
     glm::vec2 getCenter() {
       return glm::vec2{position.x + m_translation, position.y};
     };
+
+    void destroy() {
+      abcg::glDeleteBuffers(1, &m_VBO);
+      abcg::glDeleteVertexArrays(1, &m_VAO);
+    };
   };
 
   std::list<Obstacle> m_obstacles;
@@ -40,11 +45,6 @@ public:
 
 private:
   GLuint m_program{};
-  // GLint m_translationLoc{};
-
-  std::default_random_engine m_randomEngine;
-  float randomTime{0.0};
-  std::uniform_real_distribution<float> m_randomDist{1.0f, 10.0f};
 };
 
 #endif

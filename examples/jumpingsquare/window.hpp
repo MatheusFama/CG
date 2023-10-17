@@ -44,7 +44,7 @@ private:
 
   std::default_random_engine m_randomEngine;
 
-  std::uniform_real_distribution<float> m_randomDist{1.0f, 5.0f};
+  std::uniform_real_distribution<float> m_randomDist{0.5f, 4.5f};
 
   void restart();
 };

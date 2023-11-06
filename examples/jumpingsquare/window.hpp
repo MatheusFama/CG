@@ -25,25 +25,16 @@ private:
 
   GLuint m_objectsProgram{};
   GLuint m_obstaclesProgram{};
-  GLuint m_groundProgram{};
-
+  GLuint m_groundProgram{}
   GameData m_gameData;
-
   Ground m_ground;
-
   Square m_square;
-
   Obstacles m_obstacles;
-
   abcg::Timer m_restartWaitTimer;
   abcg::Timer m_restartGameWaitTimer;
-
-  float randomTime{0.0};
-
   ImFont *m_font{};
-
+  float randomTime{0.0};
   std::default_random_engine m_randomEngine;
-
   std::uniform_real_distribution<float> m_randomDist{0.5f, 4.5f};
 
   void restart();

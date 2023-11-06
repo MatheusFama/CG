@@ -5,4 +5,9 @@
 # add_subdirectory(coloredtriangles)
 #  add_subdirectory(movingtriangle)
 # add_subdirectory(asteroids)
-add_subdirectory(jumpingsquare)
+# add_subdirectory(jumpingsquare)
+# add_subdirectory(loadmodel)
+ add_subdirectory(lookat)
+ #add_subdirectory(lookatoriginal)
+
+#add_subdirectory(museum)

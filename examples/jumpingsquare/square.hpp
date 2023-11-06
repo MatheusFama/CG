@@ -12,7 +12,6 @@ public:
   void update(GameData const &gameData, float deltaTime);
   glm::vec2 getCenter();
 
-  GLfloat translationSpace{0.0003f};
   GLfloat m_translation{0.0};
   glm::vec4 m_color{1};
   glm::vec2 position{-0.85f, 0.03f};

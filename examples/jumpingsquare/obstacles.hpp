@@ -15,7 +15,6 @@ public:
   void paint(GameData const &gameData);
   void destroy();
   void update(float deltaTime);
-  abcg::Timer m_restartWaitTimer;
   GLfloat maxDistance{5.5};
   GLfloat distanceTime{3};
   struct Obstacle {
@@ -27,7 +26,7 @@ public:
     glm::vec2 position{0.99f, 0.08f};
     float m_height{0.2f};
     float m_base{0.3f};
-    GLfloat translationSpace{0.0001f};
+    //GLfloat translationSpace{0.0001f};
     GLint m_translationLoc{};
 
     glm::vec2 getCenter() {

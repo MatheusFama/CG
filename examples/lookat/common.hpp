@@ -17,7 +17,7 @@ struct ObjectConfiguration {
   bool verticalRotate;
   float radiusVerticalRotate;
   float scale;
-  std::string_view path;
+  std::string path;
   bool choosed;
 };
 

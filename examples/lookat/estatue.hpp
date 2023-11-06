@@ -5,7 +5,7 @@
 
 class Estatue {
 public:
-  void create(GLuint program, ObjectConfiguration &configuration);
+  void create(GLuint program, ObjectConfiguration configuration);
   void paint();
   void update(float deltaTime);
   void destroy();
@@ -25,10 +25,20 @@ private:
   std::vector<Vertex> m_vertices;
   std::vector<GLuint> m_indices;
 
-  ObjectConfiguration config;
   bool up{true};
   float high{0.0f};
   float radius{0.0f};
+
+  glm::vec2 startPosition{0, 0};
+  glm::vec3 color{0, 0, 0};
+  float minHigh{0.0f};
+  float maxHigh{0.0f};
+  bool verticalRotate{false};
+  float radiusVerticalRotate{0.0f};
+  float scale{0.0f};
+  std::string path{""};
+  bool choosed{false};
+
   void loadModelFromFile(std::string_view path);
 };
 #endif

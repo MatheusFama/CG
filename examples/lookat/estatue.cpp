@@ -61,25 +61,27 @@ void Estatue::loadModelFromFile(std::string_view path) {
   }
 }
 
-void Estatue::create(GLuint program, ObjectConfiguration &configuration) {
+void Estatue::create(GLuint program, ObjectConfiguration configuration) {
   m_program = program;
 
-  config.startPosition = configuration.startPosition;
-  config.color = configuration.color;
-  config.minHigh = configuration.minHigh;
-  config.maxHigh = configuration.maxHigh;
-  config.verticalRotate = configuration.verticalRotate;
-  config.radiusVerticalRotate = configuration.radiusVerticalRotate;
-  config.scale = configuration.scale;
-  config.path = configuration.path;
-  config.choosed = configuration.choosed;
+  startPosition.x = configuration.startPosition.x;
+  startPosition.y = configuration.startPosition.y;
 
-  fmt::print("CONFI\nx: {:.2f} , y: {:.2f} \n", config.startPosition.x,
-             config.startPosition.y);
+  color = configuration.color;
+  minHigh = configuration.minHigh;
+  maxHigh = configuration.maxHigh;
+  verticalRotate = configuration.verticalRotate;
+  radiusVerticalRotate = configuration.radiusVerticalRotate;
+  scale = configuration.scale;
+  path = configuration.path;
+  choosed = configuration.choosed;
 
-  fmt::print("CONFIGURATION\nx: {:.2f} , y: {:.2f} \n",
-             configuration.startPosition.x, configuration.startPosition.y);
-  high = config.minHigh;
+  high = configuration.minHigh;
+  // fmt::print("CONFI\nx: {:.2f} , y: {:.2f} \n", startPosition.x,
+  //            startPosition.y);
+
+  fmt::print("{:.2f}\n", maxHigh);
+
   // Get location of uniform variables
   m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
   m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
@@ -87,7 +89,7 @@ void Estatue::create(GLuint program, ObjectConfiguration &configuration) {
   m_colorLocation = abcg::glGetUniformLocation(m_program, "color");
 
   // Load model
-  loadModelFromFile(config.path);
+  loadModelFromFile(path);
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_VBO);
@@ -136,35 +138,31 @@ void Estatue::update(float deltaTime) {
   else
     high -= 0.1 * deltaTime;
 
-  if (high >= config.maxHigh)
+  if (high >= maxHigh)
     up = false;
-  if (high <= config.minHigh)
+  if (high <= minHigh)
     up = true;
 }
 void Estatue::paint() {
 
   abcg::glBindVertexArray(m_VAO);
 
-  // fmt::print("x: {:.2f} (min), y: {:.2f} \n", config.startPosition.x,
-  //            config.startPosition.y);
-
-  // fmt::print("PAINT\nx: {:.2f} , y: {:.2f} \n", config.startPosition.x,
-  //            config.startPosition.y);
+  // fmt::print("PAINT\nx: {:.2f} , y: {:.2f} \n", startPosition.x,
+  //            startPosition.y);
 
   //  Draw white bunny
   glm::mat4 model{1.0f};
-  model = glm::translate(
-      model, glm::vec3(config.startPosition.x, high, config.startPosition.y));
+  model =
+      glm::translate(model, glm::vec3(startPosition.x, high, startPosition.y));
   model = glm::rotate(model, radius, glm::vec3(0, 1, 0));
 
-  if (config.verticalRotate)
-    model = glm::rotate(model, config.radiusVerticalRotate, glm::vec3(1, 0, 0));
+  if (verticalRotate)
+    model = glm::rotate(model, radiusVerticalRotate, glm::vec3(1, 0, 0));
 
-  model = glm::scale(model, glm::vec3(config.scale));
+  model = glm::scale(model, glm::vec3(scale));
 
   abcg::glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &model[0][0]);
-  abcg::glUniform4f(m_colorLocation, config.color.x, config.color.y,
-                    config.color.z, 1.0f);
+  abcg::glUniform4f(m_colorLocation, color.x, color.y, color.z, 1.0f);
   abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
                        nullptr);
 

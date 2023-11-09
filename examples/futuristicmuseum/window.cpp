@@ -43,6 +43,7 @@ void Window::onCreate() {
   m_randomEngine.seed(
       std::chrono::steady_clock::now().time_since_epoch().count());
   std::uniform_real_distribution randomColor{0.0f, 1.0f};
+  std::uniform_real_distribution randomSpeed{0.2f, 0.5f};
 
   // Gerando lista de posições
   positions.clear();
@@ -64,77 +65,88 @@ void Window::onCreate() {
       {glm::vec2(-1.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false});
+       0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const catPath = assetsPath + "cat.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false});
+       0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const alienPath = assetsPath + "alien_dog.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false});
+       0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const spider_monkeyPath = assetsPath + "spider_monkey.obj";
   allConfigs.push_back(
       {glm::vec2(-1.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false});
+       0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const humanPath = assetsPath + "humanbody.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.2f, 0.45f, false, -90.0f, 0.08f, humanPath, false});
+       0.2f, 0.45f, false, -90.0f, 0.08f, humanPath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const eyePath = assetsPath + "eyeball.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.3f, 0.45f, false, -90.0f, 0.05f, eyePath, false});
+       0.3f, 0.45f, false, -90.0f, 0.05f, eyePath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const treePath = assetsPath + "tree.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.3f, 0.45f, false, -90.0f, 0.03f, treePath, false});
+       0.3f, 0.45f, false, -90.0f, 0.03f, treePath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const wolfPath = assetsPath + "wolf_one.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.15f, 0.45f, false, -90.0f, 0.55f, wolfPath, false});
+       0.15f, 0.45f, false, -90.0f, 0.55f, wolfPath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const skullPath = assetsPath + "skull.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.01f, skullPath, false});
+       0.2f, 0.45f, true, -90.0f, 0.01f, skullPath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const handPath = assetsPath + "hand.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false});
+       0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false,
+       randomSpeed(m_randomEngine)});
 
   auto const stonePath = assetsPath + "stone.obj";
   allConfigs.push_back(
       {glm::vec2(0.0f, 0.0f),
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
-       0.2f, 0.45f, false, -90.0f, 0.055f, stonePath, false});
+       0.2f, 0.45f, false, -90.0f, 0.055f, stonePath, false,
+       randomSpeed(m_randomEngine)});
 
   std::uniform_int_distribution randomPosition{0, 10};
   for (auto &pos : positions) {
@@ -158,10 +170,9 @@ void Window::onCreate() {
 
   abcg::glClearColor(0, 0, 0, 1);
 
-  // Enable depth buffering
   abcg::glEnable(GL_DEPTH_TEST);
 
-  // Create program
+  // Criando program
   m_program =
       abcg::createOpenGLProgram({{.source = assetsPath + "lookat.vert",
                                   .stage = abcg::ShaderStage::Vertex},
@@ -170,90 +181,38 @@ void Window::onCreate() {
 
   abcg::glClearColor(0, 0, 0, 1);
 
-  auto const objBasePath = assetsPath + "cilindro.obj";
-
-  // Get location of uniform variables
+  // Localizacao das variaveis uniformes
   m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
   m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
 
-  for (auto &conf : allConfigs) {
-    Estatue estatue;
-    Base base;
-
-    estatue.create(m_program, conf);
-    base.create(m_program, objBasePath, conf.startPosition);
-
-    m_estatues.push_back(estatue);
-    m_bases.push_back(base);
-  }
-
-  // auto const objPath = assetsPath + "hand.obj";
-  // ObjectConfiguration config = {glm::vec2(1.0f, -1.0f),
-  //                               glm::vec3(randomColor(m_randomEngine),
-  //                                         randomColor(m_randomEngine),
-  //                                         randomColor(m_randomEngine)),
-  //                               0.2f,
-  //                               0.45f,
-  //                               true,
-  //                               -90.0f,
-  //                               0.01f,
-  //                               objPath,
-  //                               true};
-  // auto const objPath1 = assetsPath + "cat.obj";
-  // ObjectConfiguration config1 = {glm::vec2(1.0f, 0.0f),
-  //                                glm::vec3(randomColor(m_randomEngine),
-  //                                          randomColor(m_randomEngine),
-  //                                          randomColor(m_randomEngine)),
-  //                                0.2f,
-  //                                0.45f,
-  //                                true,
-  //                                -90.0f,
-  //                                0.005f,
-  //                                objPath1,
-  //                                false};
-
-  // m_estatue.create(m_program, config);
-  // m_base.create(m_program, objBasePath, glm::vec2(1.0f, -1.0f));
-
-  // m_estatue1.create(m_program, config1);
-  // m_base1.create(m_program, objBasePath, glm::vec2(1.0f, 0.0f));
+  auto const objBasePath = assetsPath + "cilindro.obj";
+  m_collection.create(m_program, allConfigs, objBasePath);
 
   m_ground.create(m_program);
+  m_wallLateral.create(m_program, false);
+  m_wallFrontal.create(m_program, true);
 }
 
 void Window::onPaint() {
-  // Clear color buffer and depth buffer
   abcg::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
 
   abcg::glUseProgram(m_program);
 
-  // Set uniform variables for viewMatrix and projMatrix
-  // These matrices are used for every scene object
+  // Configurando as matrizes de projeçao e visao
   abcg::glUniformMatrix4fv(m_viewMatrixLocation, 1, GL_FALSE,
                            &m_camera.getViewMatrix()[0][0]);
   abcg::glUniformMatrix4fv(m_projMatrixLocation, 1, GL_FALSE,
                            &m_camera.getProjMatrix()[0][0]);
 
-  // // Draw estatue
-  // m_estatue.paint();
-  // m_base.paint();
+  // Desenhando a coleçao de obras
+  m_collection.paint();
 
-  // // Draw estatue
-  // m_estatue1.paint();
-  // m_base1.paint();
-
-  for (auto &estatue : m_estatues) {
-    estatue.paint();
-  }
-
-  for (auto &base : m_bases) {
-    base.paint();
-  }
-
-  // Draw ground
+  // Desenhando o chao
   m_ground.paint();
+  m_wallFrontal.paint();
+  m_wallLateral.paint();
 
   abcg::glUseProgram(0);
 }
@@ -266,34 +225,23 @@ void Window::onResize(glm::ivec2 const &size) {
 }
 
 void Window::onDestroy() {
+
   m_ground.destroy();
+  m_wallLateral.destroy();
+  m_wallFrontal.destroy();
 
-  for (auto &estatue : m_estatues) {
-    estatue.destroy();
-  }
+  m_collection.destroy();
 
-  for (auto &base : m_bases) {
-    base.destroy();
-  }
-
-  // m_estatue.destroy();
-  // m_base.destroy();
-
-  // m_estatue1.destroy();
-  // m_base1.destroy();
   abcg::glDeleteProgram(m_program);
 }
 
 void Window::onUpdate() {
   auto const deltaTime{gsl::narrow_cast<float>(getDeltaTime())};
 
-  for (auto &estatue : m_estatues) {
-    estatue.update(deltaTime);
-  }
+  // Atualizando coleção
+  m_collection.update(deltaTime);
 
-  // m_estatue.update(deltaTime);
-  // m_estatue1.update(deltaTime);
-  // Update LookAt camera
+  // Atualizando camera
   m_camera.dolly(m_dollySpeed * deltaTime);
   m_camera.truck(m_truckSpeed * deltaTime);
   m_camera.pan(m_panSpeed * deltaTime);

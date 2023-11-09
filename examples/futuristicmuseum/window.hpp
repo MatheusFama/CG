@@ -5,9 +5,11 @@
 
 #include "base.hpp"
 #include "camera.hpp"
+#include "collection.hpp"
 #include "common.hpp"
 #include "estatue.hpp"
 #include "ground.hpp"
+#include "wall.hpp"
 #include <random>
 
 class Window : public abcg::OpenGLWindow {
@@ -36,15 +38,10 @@ private:
   float m_truckSpeed{};
   float m_panSpeed{};
 
+  Collection m_collection;
   Ground m_ground;
-  Base m_base;
-  Estatue m_estatue;
-
-  // Base m_base1;
-  // Estatue m_estatue1;
-
-  std::vector<Base> m_bases;
-  std::vector<Estatue> m_estatues;
+  Wall m_wallLateral;
+  Wall m_wallFrontal;
 
   std::vector<ObjectConfiguration> allConfigs;
   std::vector<glm::vec2> positions;

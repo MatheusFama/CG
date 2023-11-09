@@ -38,6 +38,7 @@ private:
   float scale{0.0f};
   std::string path{""};
   bool choosed{false};
+  float rotationSpeed{0.0f};
 
   void loadModelFromFile(std::string_view path);
 };

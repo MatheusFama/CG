@@ -19,6 +19,7 @@ struct ObjectConfiguration {
   float scale;
   std::string path;
   bool choosed;
+  float rotationSpeed;
 };
 
 #endif

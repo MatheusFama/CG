@@ -62,11 +62,12 @@ void Estatue::loadModelFromFile(std::string_view path) {
 }
 
 void Estatue::create(GLuint program, ObjectConfiguration configuration) {
+
+  // Configurando objeto
   m_program = program;
 
   startPosition.x = configuration.startPosition.x;
   startPosition.y = configuration.startPosition.y;
-
   color = configuration.color;
   minHigh = configuration.minHigh;
   maxHigh = configuration.maxHigh;
@@ -75,23 +76,19 @@ void Estatue::create(GLuint program, ObjectConfiguration configuration) {
   scale = configuration.scale;
   path = configuration.path;
   choosed = configuration.choosed;
-
+  rotationSpeed = configuration.rotationSpeed;
   high = configuration.minHigh;
-  // fmt::print("CONFI\nx: {:.2f} , y: {:.2f} \n", startPosition.x,
-  //            startPosition.y);
 
-  fmt::print("{:.2f}\n", maxHigh);
-
-  // Get location of uniform variables
+  // Variaveis uniformes
   m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
   m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
   m_modelMatrixLocation = abcg::glGetUniformLocation(m_program, "modelMatrix");
   m_colorLocation = abcg::glGetUniformLocation(m_program, "color");
 
-  // Load model
+  // Carregando modelo
   loadModelFromFile(path);
 
-  // Generate VBO
+  // Gerando VBO
   abcg::glGenBuffers(1, &m_VBO);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
   abcg::glBufferData(GL_ARRAY_BUFFER,
@@ -99,7 +96,7 @@ void Estatue::create(GLuint program, ObjectConfiguration configuration) {
                      m_vertices.data(), GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // Generate EBO
+  // Gerando EBO
   abcg::glGenBuffers(1, &m_EBO);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
   abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER,
@@ -107,10 +104,9 @@ void Estatue::create(GLuint program, ObjectConfiguration configuration) {
                      m_indices.data(), GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  // Create VAO
+  // Criando VAO
   abcg::glGenVertexArrays(1, &m_VAO);
 
-  // Bind vertex attributes to current VAO
   abcg::glBindVertexArray(m_VAO);
 
   abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -123,21 +119,25 @@ void Estatue::create(GLuint program, ObjectConfiguration configuration) {
 
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 
-  // End of binding to current VAO
   abcg::glBindVertexArray(0);
 }
 
 void Estatue::update(float deltaTime) {
-  radius += 0.5 * deltaTime;
 
+  // Calculando angulo de rotação
+  radius += rotationSpeed * deltaTime;
+
+  // para nao estourar a variável
   if (radius >= 360)
     radius -= 360;
 
+  // alterando altura y do modelo
   if (up)
     high += 0.1 * deltaTime;
   else
     high -= 0.1 * deltaTime;
 
+  // Verificando se o objeto deve subir ou descer
   if (high >= maxHigh)
     up = false;
   if (high <= minHigh)
@@ -147,15 +147,12 @@ void Estatue::paint() {
 
   abcg::glBindVertexArray(m_VAO);
 
-  // fmt::print("PAINT\nx: {:.2f} , y: {:.2f} \n", startPosition.x,
-  //            startPosition.y);
-
-  //  Draw white bunny
+  // Desenhando modelo
   glm::mat4 model{1.0f};
   model =
       glm::translate(model, glm::vec3(startPosition.x, high, startPosition.y));
   model = glm::rotate(model, radius, glm::vec3(0, 1, 0));
-
+  // Caso seja necessário rotação
   if (verticalRotate)
     model = glm::rotate(model, radiusVerticalRotate, glm::vec3(1, 0, 0));
 

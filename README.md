@@ -55,135 +55,380 @@ O projeto foi separado nas seguintes classes:
     └   lookat.vert</code></pre>
 
 ### Cenário
-O cenário do jogo será formado pelos seguintes objetos:
-* O personagem square formado por GL_TRIANGLES;
-* Obstáculos formados por GL_TRIANGLES;
-* Terreno formado por GL_LINE_STRIP;
+O cenário será formado pelos seguintes objetos:
+* A plataforma formada por GL_TRIANGLES;
+* A estátua formada por GL_TRIANGLES;
+* Terreno formado por GL_TRIANGLE_STRIP;
+* A parede formado por GL_TRIANGLE_STRIP;
+  
+*obs: Vale ressaltar que os vértices utilizados para gerar cada modelo bem como a indexação dos mesmos encontram-se num arquivo obj.
 
 ### main.hpp
 Construção padrão da classe main vista em aula.
 <pre>
   <code >
-  #ifndef WINDOW_HPP_
-  #define WINDOW_HPP_
-  
-  #include <random>
-  
-  #include "abcgOpenGL.hpp"
-  
-  #include "ground.hpp"
-  #include "obstacles.hpp"
-  #include "square.hpp"
-  
-  class Window : public abcg::OpenGLWindow {
-  protected:
-    void onEvent(SDL_Event const &event) override;
-    void onCreate() override;
-    void onUpdate() override;
-    void onPaint() override;
-    void onPaintUI() override;
-    void onResize(glm::ivec2 const &size) override;
-    void onDestroy() override;
-    void checkCollisions();
-  
-  private:
-    glm::ivec2 m_viewportSize{};
-  
-    GLuint m_objectsProgram{};
-    GLuint m_obstaclesProgram{};
-    GLuint m_groundProgram{};
-  
-    GameData m_gameData;
-  
-    Ground m_ground;
-  
-    Square m_square;
-  
-    Obstacles m_obstacles;
-  
-    abcg::Timer m_restartWaitTimer;
-    abcg::Timer m_restartGameWaitTimer;
-  
-    float randomTime{0.0};
-  
-    ImFont *m_font{};
-  
-    std::default_random_engine m_randomEngine;
-  
-    std::uniform_real_distribution<float> m_randomDist{1.0f, 5.0f};
-  
-    void restart();
-  };
-  
-  #endif
+  #include "window.hpp"
+
+int main(int argc, char **argv) {
+  try {
+    abcg::Application app(argc, argv);
+
+    Window window;
+    window.setOpenGLSettings({.samples = 4});
+    window.setWindowSettings({
+        .width = 600,
+        .height = 600,
+        .title = "LookAt Camera",
+    });
+
+    app.run(window);
+  } catch (std::exception const &exception) {
+    fmt::print(stderr, "{}\n", exception.what());
+    return -1;
+  }
+  return 0;
+}
   </code>
 </pre>
 
 ### window.hpp
 <pre>
   <code>
-  #ifndef WINDOW_HPP_
-#define WINDOW_HPP_
+ #include "window.hpp"
 
-#include <random>
+void Window::onEvent(SDL_Event const &event) {
+  if (event.type == SDL_KEYDOWN) {
+    if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w)
+      m_dollySpeed = 1.0f;
+    if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s)
+      m_dollySpeed = -1.0f;
+    if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a)
+      m_panSpeed = -1.0f;
+    if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d)
+      m_panSpeed = 1.0f;
+    if (event.key.keysym.sym == SDLK_q)
+      m_truckSpeed = -1.0f;
+    if (event.key.keysym.sym == SDLK_e)
+      m_truckSpeed = 1.0f;
+  }
+  if (event.type == SDL_KEYUP) {
+    if ((event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w) &&
+        m_dollySpeed > 0)
+      m_dollySpeed = 0.0f;
+    if ((event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s) &&
+        m_dollySpeed < 0)
+      m_dollySpeed = 0.0f;
+    if ((event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a) &&
+        m_panSpeed < 0)
+      m_panSpeed = 0.0f;
+    if ((event.key.keysym.sym == SDLK_RIGHT ||
+         event.key.keysym.sym == SDLK_d) &&
+        m_panSpeed > 0)
+      m_panSpeed = 0.0f;
+    if (event.key.keysym.sym == SDLK_q && m_truckSpeed < 0)
+      m_truckSpeed = 0.0f;
+    if (event.key.keysym.sym == SDLK_e && m_truckSpeed > 0)
+      m_truckSpeed = 0.0f;
+  }
+}
 
-#include "abcgOpenGL.hpp"
+void Window::onCreate() {
+  auto const &assetsPath{abcg::Application::getAssetsPath()};
 
-#include "ground.hpp"
-#include "obstacles.hpp"
-#include "square.hpp"
+  // Gerador de cores aleatórias
+  m_randomEngine.seed(
+      std::chrono::steady_clock::now().time_since_epoch().count());
+  std::uniform_real_distribution randomColor{0.0f, 1.0f};
+  std::uniform_real_distribution randomSpeed{0.2f, 0.5f};
 
-class Window : public abcg::OpenGLWindow {
-protected:
-  void onEvent(SDL_Event const &event) override;
-  void onCreate() override;
-  void onUpdate() override;
-  void onPaint() override;
-  void onPaintUI() override;
-  void onResize(glm::ivec2 const &size) override;
-  void onDestroy() override;
-  void checkCollisions();
+  // Gerando lista de posições
+  positions.clear();
 
-private:
-  glm::ivec2 m_viewportSize{};
+  positions.push_back(glm::vec2(-1.0f, 0.0f));
+  positions.push_back(glm::vec2(-1.0f, -1.0f));
+  positions.push_back(glm::vec2(-1.0f, -2.0f));
+  positions.push_back(glm::vec2(-1.0f, -3.0f));
+  positions.push_back(glm::vec2(1.0f, 0.0f));
+  positions.push_back(glm::vec2(1.0f, -1.0f));
+  positions.push_back(glm::vec2(1.0f, -2.0f));
+  positions.push_back(glm::vec2(1.0f, -3.0f));
 
-  GLuint m_objectsProgram{};
-  GLuint m_obstaclesProgram{};
-  GLuint m_groundProgram{}
-  GameData m_gameData;
-  Ground m_ground;
-  Square m_square;
-  Obstacles m_obstacles;
-  abcg::Timer m_restartWaitTimer;
-  abcg::Timer m_restartGameWaitTimer;
-  ImFont *m_font{};
-  float randomTime{0.0};
-  std::default_random_engine m_randomEngine;
-  std::uniform_real_distribution<float> m_randomDist{0.5f, 4.5f};
+  positions.push_back(glm::vec2(-2.5f, 0.0f));
+  positions.push_back(glm::vec2(-2.5f, -1.0f));
+  positions.push_back(glm::vec2(-2.5f, -2.0f));
+  positions.push_back(glm::vec2(-2.5f, -3.0f));
+  positions.push_back(glm::vec2(2.5f, 0.0f));
+  positions.push_back(glm::vec2(2.5f, -1.0f));
+  positions.push_back(glm::vec2(2.5f, -2.0f));
+  positions.push_back(glm::vec2(2.5f, -3.0f));
 
-  void restart();
-};
+  // Lista com todas as configurações dos modelos
+  allConfigs.clear();
 
-#endif
+  auto const bunnyPath = assetsPath + "bunny.obj";
+  allConfigs.push_back(
+      {glm::vec2(-1.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const catPath = assetsPath + "cat.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const dogPath = assetsPath + "dog.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.005f, dogPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const dolphinPath = assetsPath + "dolphin.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.0035f, dolphinPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const whalePath = assetsPath + "whale.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.3f, 0.55f, true, -90.0f, 0.001f, whalePath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const pufferFishPath = assetsPath + "puffer_fish.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.3f, 0.55f, true, -90.0f, 0.01f, pufferFishPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const dragonPath = assetsPath + "dragon.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.3f, 0.55f, false, -90.0f, 0.001f, dragonPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const birdPath = assetsPath + "bird.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.01f, birdPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const alienPath = assetsPath + "alien_dog.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const spider_monkeyPath = assetsPath + "spider_monkey.obj";
+  allConfigs.push_back(
+      {glm::vec2(-1.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const humanPath = assetsPath + "humanbody.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, false, -90.0f, 0.08f, humanPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const eyePath = assetsPath + "eyeball.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.3f, 0.45f, false, -90.0f, 0.05f, eyePath, false,
+       randomSpeed(m_randomEngine), 0.85});
+
+  auto const treePath = assetsPath + "tree.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.3f, 0.45f, false, -90.0f, 0.03f, treePath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const wolfPath = assetsPath + "wolf_one.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.15f, 0.45f, false, -90.0f, 0.55f, wolfPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const skullPath = assetsPath + "skull.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.01f, skullPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const handPath = assetsPath + "hand.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const stonePath = assetsPath + "stone.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, false, -90.0f, 0.055f, stonePath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const trex = assetsPath + "t_rex.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, false, -90.0f, 0.0005f, trex, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const horsePath = assetsPath + "horse.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.0025f, horsePath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto si = (int)allConfigs.size() - 1;
+  std::uniform_int_distribution randomPosition{0, si};
+  for (auto &pos : positions) {
+
+    bool check = true;
+    do {
+      int i = randomPosition(m_randomEngine);
+      auto &config = allConfigs[i];
+      if (!config.choosed) {
+        config.startPosition = pos;
+        config.choosed = true;
+        check = false;
+      }
+    } while (check);
+  }
+  // Removendo os que nao foram escolhidos
+  allConfigs.erase(
+      std::remove_if(allConfigs.begin(), allConfigs.end(),
+                     [](const ObjectConfiguration &o) { return !o.choosed; }),
+      allConfigs.end());
+
+  abcg::glClearColor(0, 0, 0, 1);
+
+  abcg::glEnable(GL_DEPTH_TEST);
+
+  // Criando program
+  m_program =
+      abcg::createOpenGLProgram({{.source = assetsPath + "lookat.vert",
+                                  .stage = abcg::ShaderStage::Vertex},
+                                 {.source = assetsPath + "lookat.frag",
+                                  .stage = abcg::ShaderStage::Fragment}});
+
+  abcg::glClearColor(0, 0, 0, 1);
+
+  // Localizacao das variaveis uniformes
+  m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
+  m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
+
+  auto const objBasePath = assetsPath + "cilindro.obj";
+  m_collection.create(m_program, allConfigs, objBasePath);
+
+  m_ground.create(m_program);
+  m_wall.create(m_program);
+}
+
+void Window::onPaint() {
+  abcg::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
+
+  abcg::glUseProgram(m_program);
+
+  // Configurando as matrizes de projeçao e visao
+  abcg::glUniformMatrix4fv(m_viewMatrixLocation, 1, GL_FALSE,
+                           &m_camera.getViewMatrix()[0][0]);
+  abcg::glUniformMatrix4fv(m_projMatrixLocation, 1, GL_FALSE,
+                           &m_camera.getProjMatrix()[0][0]);
+
+  // Desenhando a coleçao de obras
+  m_collection.paint();
+
+  // Desenhando o chao
+  m_ground.paint();
+  m_wall.paint();
+
+  abcg::glUseProgram(0);
+}
+
+void Window::onPaintUI() { abcg::OpenGLWindow::onPaintUI(); }
+
+void Window::onResize(glm::ivec2 const &size) {
+  m_viewportSize = size;
+  m_camera.computeProjectionMatrix(size);
+}
+
+void Window::onDestroy() {
+
+  m_ground.destroy();
+  m_wall.destroy();
+
+  m_collection.destroy();
+
+  abcg::glDeleteProgram(m_program);
+}
+
+void Window::onUpdate() {
+  auto const deltaTime{gsl::narrow_cast<float>(getDeltaTime())};
+
+  // Atualizando coleção
+  m_collection.update(deltaTime);
+
+  // Atualizando camera
+  m_camera.dolly(m_dollySpeed * deltaTime);
+  m_camera.truck(m_truckSpeed * deltaTime);
+  m_camera.pan(m_panSpeed * deltaTime);
+}
   </code>
 </pre>
   * glm::ivec2 m_viewportSize : indica o tamanaho da view port.
-  * GLuint m_objectsProgram: programa que será utilizado em square.
-  * GLuint m_obstaclesProgram: programa que será utilizando em obstacle.
-  * GLuint m_groundProgram: programa que será utilizando em ground.
-  * GameData m_gameData : Para gerenciar o estado do jogo, utilizaremos uma instancia de GameData.
-  * Ground m_ground: Referência para ground.
-  * Square m_square: Referência para square.
-  * Obstacles m_obstacles: Referência para obstacles.
-  * abcg::Timer m_restartWaitTimer: Timer que utilizado para indicar quando será criado o proximo obstaculo.
-  * abcg::Timer m_restartGameWaitTimer: Timer que utilizado para contar a quantidade de tempo feita pelo jogador e para reiniciar a partida.
-  * ImFont *m_font: fonte que será utilizada no jogo.
-  * float randomTime: Referência para armazenar o resultado final do jogador.
+  * GLuint m_program: referência para o programa utilizado.
+  * GLuint m_viewMatrixLocation: referência para a matriz de visão.
+  * GLuint m_projMatrixLocation: referência para a matriz de projeção.
+  * Camera m_camera: referência para o observador.
+  * float m_dollySpeed: variavel responsável por ativar a direção do movimento de trás e frente da camera.
+  * float m_truckSpeed: variavel responsável por ativar a direação do movimento lateral da camera.
+  * float m_panSpeed: variavel responsável por ativar a direção do giro da camera em seu próprio eixo.
+  * Collection m_collection: responsável por gerenciar o acervo do múseu.
+  * Ground m_ground: responsável por desenhar o chão.
+  * Wall m_wall: responsável por desenhar o chão.
+  * std::vector<ObjectConfiguration> allConfigs: Lista de configurações das estátuas.
+  * std::vector<glm::vec2> positions: lista de configurações das posições inciais.
   * std::default_random_engine m_randomEngine: Seed para aleatorizar quando será gerado o próximo obstáculo.
-  * std::uniform_real_distribution<float> m_randomDist: Distribuição para determinar quando será gerado o proximo obstáculo.
-  * void restart(): método utilizado para configurar o inicio de cada partida.
-  * void checkCollisions() : método utilizado para checar colisões entre obstáculos e square.
-
 
 ### gamedata.hpp
 

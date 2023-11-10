@@ -1,13 +1,14 @@
-# JumpingSquare
+# FuturisticMuseum
 * Nome: Matheus Fama
 * RA: 11040615
   
 ## Descrição
-* JumpingSquare é um jogo inspirado no famoso "Chrome Dino" onde o objetivo é sobreviver o maior tempo possível desviando dos obstáculos. Neste jogo, a mecânica é mantida simples, com o uso de formas geométricas primárias, como quadrados e triângulos.
+* O FuturisticMuseum proporciona uma visão inovadora ao representar um museu do futuro, onde cada obra do acervo é cuidadosamente disposta em sua própria plataforma, girando e movendo-se verticalmente, em uma simulação de gravidade artificial. Esse design permite que o observador aprecie cada peça de arte sob uma variedade de ângulos, proporcionando uma experiência única e dinâmica.
+  A ideia foi inspirada observando os projetos em aula. Os modelos 3d quando sem textura pareciam estátuas e, para demonstrar os conceitos aprendidos em aula, decidi movimentar os modelos das mais diversas formas dando uma perspectiva futurista para a cena.
 
-Você pode testar o jogo [aqui](https://matheusfama.github.io/CG.github.io/public/jumpingsquare.html).
+Você pode ver o projeto [aqui](https://matheusfama.github.io/CG.github.io/public/futuristicmuseum.html).
 
-### Chrome Dino
+### Museu
 <table>
   <tr>
     <td>
@@ -16,49 +17,42 @@ Você pode testar o jogo [aqui](https://matheusfama.github.io/CG.github.io/publi
   </tr>
 </table>
 
-### Jumping Square
-
-<table>
-  <tr>
-    <td>
-      <img src="https://github.com/MatheusFama/CG-Assets/blob/main/ezgif.com-optimize.gif" width="300">
-    </td>
-  </tr>
-</table>
-
 
 ## Organização do Projeto
 O projeto foi separado nas seguintes classes:
 
-* Square: classe que representará o personagem.
-* Obstacle: classe responsável por gerenciar os obstáculos.
-* GameData: clase responsável por gerenciar o estado do jogo.
+* Base: classe que representa a base onde as estátuas estarão.
+* Estatue: classe que representa a obra que estará sob as bases.
+* Collection: classe que controlará o acervo de obras.
 * Ground : classe que representa o terreno.
+* Wall: classe que representa as quatro paredes da cena.
+* Camera: classe que representa a visão do observador.
 
 
 ### Organização dos arquivos
 <pre>
 <code>jumpingsquare/
-│   square.cpp
-│   square.hpp
-│   ground.cpp
-│   ground.hpp
-│   obstacle.cpp
-│   obstacle.hpp
+│   base.cpp
+│   base.hpp
+│   camera.cpp
+│   camera.hpp
+│   collection.cpp
+│   colection.hpp
 │   CMakeLists.txt
-│   gamedata.hpp
+│   common.hpp
+|   estatue.hpp
+|   estatue.cpp
+|   ground.hpp
+|   ground.cpp
+|   wall.hpp
+|   wall.cpp  
 │   main.cpp
 │   window.hpp
 │   window.cpp
 │
 └───assets/
-    │   Inconsolata-Medium.ttf
-    │   ground.frag
-    │   ground.vert
-    │   objects.frag
-    │   objects.vert
-    │   obstacle.frag
-    └   obstacle.vert</code></pre>
+    │   lookat.frag
+    └   lookat.vert</code></pre>
 
 ### Cenário
 O cenário do jogo será formado pelos seguintes objetos:

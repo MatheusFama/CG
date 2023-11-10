@@ -39,7 +39,7 @@ private:
   std::string path{""};
   bool choosed{false};
   float rotationSpeed{0.0f};
-
+  float triangulesToDraw{1.0f};
   void loadModelFromFile(std::string_view path);
 };
 #endif

@@ -57,6 +57,15 @@ void Window::onCreate() {
   positions.push_back(glm::vec2(1.0f, -2.0f));
   positions.push_back(glm::vec2(1.0f, -3.0f));
 
+  positions.push_back(glm::vec2(-2.5f, 0.0f));
+  positions.push_back(glm::vec2(-2.5f, -1.0f));
+  positions.push_back(glm::vec2(-2.5f, -2.0f));
+  positions.push_back(glm::vec2(-2.5f, -3.0f));
+  positions.push_back(glm::vec2(2.5f, 0.0f));
+  positions.push_back(glm::vec2(2.5f, -1.0f));
+  positions.push_back(glm::vec2(2.5f, -2.0f));
+  positions.push_back(glm::vec2(2.5f, -3.0f));
+
   // Lista com todas as configurações dos modelos
   allConfigs.clear();
 
@@ -66,7 +75,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const catPath = assetsPath + "cat.obj";
   allConfigs.push_back(
@@ -74,7 +83,55 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const dogPath = assetsPath + "dog.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.005f, dogPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const dolphinPath = assetsPath + "dolphin.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.0035f, dolphinPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const whalePath = assetsPath + "whale.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.3f, 0.55f, true, -90.0f, 0.001f, whalePath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const pufferFishPath = assetsPath + "puffer_fish.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.3f, 0.55f, true, -90.0f, 0.01f, pufferFishPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const dragonPath = assetsPath + "dragon.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.3f, 0.55f, false, -90.0f, 0.001f, dragonPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const birdPath = assetsPath + "bird.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.01f, birdPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const alienPath = assetsPath + "alien_dog.obj";
   allConfigs.push_back(
@@ -82,7 +139,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const spider_monkeyPath = assetsPath + "spider_monkey.obj";
   allConfigs.push_back(
@@ -90,7 +147,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const humanPath = assetsPath + "humanbody.obj";
   allConfigs.push_back(
@@ -98,7 +155,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.2f, 0.45f, false, -90.0f, 0.08f, humanPath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const eyePath = assetsPath + "eyeball.obj";
   allConfigs.push_back(
@@ -106,7 +163,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.3f, 0.45f, false, -90.0f, 0.05f, eyePath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 0.85});
 
   auto const treePath = assetsPath + "tree.obj";
   allConfigs.push_back(
@@ -114,7 +171,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.3f, 0.45f, false, -90.0f, 0.03f, treePath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const wolfPath = assetsPath + "wolf_one.obj";
   allConfigs.push_back(
@@ -122,7 +179,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.15f, 0.45f, false, -90.0f, 0.55f, wolfPath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const skullPath = assetsPath + "skull.obj";
   allConfigs.push_back(
@@ -130,7 +187,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.2f, 0.45f, true, -90.0f, 0.01f, skullPath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const handPath = assetsPath + "hand.obj";
   allConfigs.push_back(
@@ -138,7 +195,7 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const stonePath = assetsPath + "stone.obj";
   allConfigs.push_back(
@@ -146,9 +203,26 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.2f, 0.45f, false, -90.0f, 0.055f, stonePath, false,
-       randomSpeed(m_randomEngine)});
+       randomSpeed(m_randomEngine), 1.0f});
 
-  std::uniform_int_distribution randomPosition{0, 10};
+  auto const trex = assetsPath + "t_rex.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, false, -90.0f, 0.0005f, trex, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const horsePath = assetsPath + "horse.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.0025f, horsePath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto si = (int)allConfigs.size() - 1;
+  std::uniform_int_distribution randomPosition{0, si};
   for (auto &pos : positions) {
 
     bool check = true;
@@ -189,8 +263,7 @@ void Window::onCreate() {
   m_collection.create(m_program, allConfigs, objBasePath);
 
   m_ground.create(m_program);
-  m_wallLateral.create(m_program, false);
-  m_wallFrontal.create(m_program, true);
+  m_wall.create(m_program);
 }
 
 void Window::onPaint() {
@@ -211,8 +284,7 @@ void Window::onPaint() {
 
   // Desenhando o chao
   m_ground.paint();
-  m_wallFrontal.paint();
-  m_wallLateral.paint();
+  m_wall.paint();
 
   abcg::glUseProgram(0);
 }
@@ -227,8 +299,7 @@ void Window::onResize(glm::ivec2 const &size) {
 void Window::onDestroy() {
 
   m_ground.destroy();
-  m_wallLateral.destroy();
-  m_wallFrontal.destroy();
+  m_wall.destroy();
 
   m_collection.destroy();
 

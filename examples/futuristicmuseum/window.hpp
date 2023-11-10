@@ -40,8 +40,7 @@ private:
 
   Collection m_collection;
   Ground m_ground;
-  Wall m_wallLateral;
-  Wall m_wallFrontal;
+  Wall m_wall;
 
   std::vector<ObjectConfiguration> allConfigs;
   std::vector<glm::vec2> positions;

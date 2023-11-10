@@ -78,6 +78,7 @@ void Estatue::create(GLuint program, ObjectConfiguration configuration) {
   choosed = configuration.choosed;
   rotationSpeed = configuration.rotationSpeed;
   high = configuration.minHigh;
+  triangulesToDraw = configuration.triangulesToDraw;
 
   // Variaveis uniformes
   m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
@@ -154,14 +155,20 @@ void Estatue::paint() {
   model = glm::rotate(model, radius, glm::vec3(0, 1, 0));
   // Caso seja necessário rotação
   if (verticalRotate)
-    model = glm::rotate(model, radiusVerticalRotate, glm::vec3(1, 0, 0));
+    model = glm::rotate(model, glm::radians(radiusVerticalRotate),
+                        glm::vec3(1, 0, 0));
 
   model = glm::scale(model, glm::vec3(scale));
 
   abcg::glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &model[0][0]);
   abcg::glUniform4f(m_colorLocation, color.x, color.y, color.z, 1.0f);
-  abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
-                       nullptr);
+
+  auto n{m_indices.size()};
+  if (triangulesToDraw != 1.0f) {
+    n = (int)n * triangulesToDraw;
+  }
+
+  abcg::glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, nullptr);
 
   abcg::glBindVertexArray(0);
 }

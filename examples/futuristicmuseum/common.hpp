@@ -20,6 +20,7 @@ struct ObjectConfiguration {
   std::string path;
   bool choosed;
   float rotationSpeed;
+  float triangulesToDraw;
 };
 
 #endif

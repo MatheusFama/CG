@@ -1,30 +1,19 @@
 #include "wall.hpp"
 
-void Wall::create(GLuint program, bool isFrontal) {
+void Wall::create(GLuint program) {
 
-  frontal = isFrontal;
-  std::array<glm::vec3, 4> verticesLateral{{{0.0f, -0.5f, +0.5f},
-                                            {0.0f, -0.5f, -0.5f},
-                                            {0.0f, +0.5f, +0.5f},
-                                            {0.0f, +0.5f, -0.5f}}};
-
-  std::array<glm::vec3, 4> verticesFrontal{{{-0.5f, +0.5f, 0.0f},
-                                            {-0.5f, -0.5f, 0.0f},
-                                            {+0.5f, +0.5f, 0.0f},
-                                            {+0.5f, -0.5f, 0.0f}}};
+  std::array<glm::vec3, 4> vertices{{{0.0f, -0.5f, +0.5f},
+                                     {0.0f, -0.5f, -0.5f},
+                                     {0.0f, +0.5f, +0.5f},
+                                     {0.0f, +0.5f, -0.5f}}};
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_VBO);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-  if (frontal) {
-    abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(verticesFrontal),
-                       verticesFrontal.data(), GL_STATIC_DRAW);
-  } else {
 
-    abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(verticesLateral),
-                       verticesLateral.data(), GL_STATIC_DRAW);
-    abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
-  }
+  abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(),
+                     GL_STATIC_DRAW);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // Create VAO and bind vertex attributes
   abcg::glGenVertexArrays(1, &m_VAO);
@@ -47,65 +36,65 @@ void Wall::paint() {
   abcg::glBindVertexArray(m_VAO);
   auto const N{5};
 
-  if (frontal) {
-    // parede esquerda
-    for (auto const x : iter::range(-N, N + 1)) {
-      for (auto const y : iter::range(-N, N + 1)) {
-        // Set model matrix as a translation matrix
-        glm::mat4 model{1.0f};
-        model = glm::translate(model, glm::vec3(x, y, -5.0f));
+  // parede traseira
+  for (auto const x : iter::range(-N, N + 1)) {
+    for (auto const y : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(x, y, 5.0f));
+      // rotacionando modelo pois o modelo original está no espaço yz
+      model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0, 1, 0));
 
-        abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
 
-        abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
+      abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
 
-        abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-      }
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
+  }
 
-    // parede esquerda
-    for (auto const x : iter::range(-N, N + 1)) {
-      for (auto const y : iter::range(-N, N + 1)) {
-        // Set model matrix as a translation matrix
-        glm::mat4 model{1.0f};
-        model = glm::translate(model, glm::vec3(x, y, 5.0f));
+  // parede frontal
+  for (auto const x : iter::range(-N, N + 1)) {
+    for (auto const y : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(x, y, -5.0f));
+      // rotacionando modelo pois o modelo original está no espaço yz
+      model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0, 1, 0));
 
-        abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
 
-        abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
+      abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
 
-        abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-      }
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
+  }
 
-  } else {
+  // parede direita
+  for (auto const z : iter::range(-N, N + 1)) {
+    for (auto const y : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(5.0f, y, z));
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
 
-    // parede direita
-    for (auto const z : iter::range(-N, N + 1)) {
-      for (auto const y : iter::range(-N, N + 1)) {
-        // Set model matrix as a translation matrix
-        glm::mat4 model{1.0f};
-        model = glm::translate(model, glm::vec3(5.0f, y, z));
-        abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+      abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
 
-        abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
-
-        abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-      }
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
+  }
 
-    // parede esquerda
-    for (auto const z : iter::range(-N, N + 1)) {
-      for (auto const y : iter::range(-N, N + 1)) {
-        // Set model matrix as a translation matrix
-        glm::mat4 model{1.0f};
-        model = glm::translate(model, glm::vec3(-5.0f, y, z));
-        abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+  // parede esquerda
+  for (auto const z : iter::range(-N, N + 1)) {
+    for (auto const y : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(-5.0f, y, z));
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
 
-        abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
+      abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
 
-        abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-      }
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
   }
 

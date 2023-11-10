@@ -5,7 +5,7 @@
 
 class Wall {
 public:
-  void create(GLuint program, bool isFrontal);
+  void create(GLuint program);
   void paint();
   void destroy();
 
@@ -15,7 +15,6 @@ private:
 
   GLint m_modelMatrixLoc{};
   GLint m_colorLoc{};
-  bool frontal{false};
 };
 
 #endif

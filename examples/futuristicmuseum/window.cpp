@@ -133,21 +133,21 @@ void Window::onCreate() {
        0.2f, 0.45f, true, -90.0f, 0.01f, birdPath, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  // auto const alienPath = assetsPath + "alien_dog.obj";
-  // allConfigs.push_back(
-  //     {glm::vec2(0.0f, 0.0f),
-  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-  //                randomColor(m_randomEngine)),
-  //      0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false,
-  //      randomSpeed(m_randomEngine), 1.0f});
+  auto const alienPath = assetsPath + "alien_dog.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
 
-  // auto const spider_monkeyPath = assetsPath + "spider_monkey.obj";
-  // allConfigs.push_back(
-  //     {glm::vec2(-1.0f, 0.0f),
-  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-  //                randomColor(m_randomEngine)),
-  //      0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false,
-  //      randomSpeed(m_randomEngine), 1.0f});
+  auto const spider_monkeyPath = assetsPath + "spider_monkey.obj";
+  allConfigs.push_back(
+      {glm::vec2(-1.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const humanPath = assetsPath + "humanbody.obj";
   allConfigs.push_back(
@@ -189,13 +189,13 @@ void Window::onCreate() {
        0.2f, 0.45f, true, -90.0f, 0.01f, skullPath, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  // auto const handPath = assetsPath + "hand.obj";
-  // allConfigs.push_back(
-  //     {glm::vec2(0.0f, 0.0f),
-  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-  //                randomColor(m_randomEngine)),
-  //      0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false,
-  //      randomSpeed(m_randomEngine), 1.0f});
+  auto const handPath = assetsPath + "hand.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const stonePath = assetsPath + "stone.obj";
   allConfigs.push_back(

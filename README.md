@@ -12,7 +12,7 @@ Você pode ver o projeto [aqui](https://matheusfama.github.io/CG.github.io/publi
 <table>
   <tr>
     <td>
-      <img src="https://github.com/MatheusFama/CG-Assets/blob/main/ChronoDino.jpeg" width="300">
+      <img src="https://github.com/MatheusFama/CG-Assets/blob/main/futuristicmuseum.gif" width="300">
     </td>
   </tr>
 </table>

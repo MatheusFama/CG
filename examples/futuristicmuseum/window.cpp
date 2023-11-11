@@ -57,14 +57,14 @@ void Window::onCreate() {
   positions.push_back(glm::vec2(1.0f, -2.0f));
   positions.push_back(glm::vec2(1.0f, -3.0f));
 
-  // positions.push_back(glm::vec2(-2.5f, 0.0f));
-  // positions.push_back(glm::vec2(-2.5f, -1.0f));
-  // positions.push_back(glm::vec2(-2.5f, -2.0f));
-  // positions.push_back(glm::vec2(-2.5f, -3.0f));
-  // positions.push_back(glm::vec2(2.5f, 0.0f));
-  // positions.push_back(glm::vec2(2.5f, -1.0f));
-  // positions.push_back(glm::vec2(2.5f, -2.0f));
-  // positions.push_back(glm::vec2(2.5f, -3.0f));
+  positions.push_back(glm::vec2(-2.5f, 0.0f));
+  positions.push_back(glm::vec2(-2.5f, -1.0f));
+  positions.push_back(glm::vec2(-2.5f, -2.0f));
+  positions.push_back(glm::vec2(-2.5f, -3.0f));
+  positions.push_back(glm::vec2(2.5f, 0.0f));
+  positions.push_back(glm::vec2(2.5f, -1.0f));
+  positions.push_back(glm::vec2(2.5f, -2.0f));
+  positions.push_back(glm::vec2(2.5f, -3.0f));
 
   // Lista com todas as configurações dos modelos
   allConfigs.clear();

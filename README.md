@@ -61,7 +61,7 @@ O cenário será formado pelos seguintes objetos:
 * Terreno formado por GL_TRIANGLE_STRIP;
 * A parede formado por GL_TRIANGLE_STRIP;
   
-*obs: Vale ressaltar que os vértices utilizados para gerar cada modelo bem como a indexação dos mesmos encontram-se num arquivo obj.
+*obs: Vale ressaltar que os vértices utilizados para gerar cada modelo bem como a indexação dos mesmos encontram-se em arquivo obj.
 
 ### main.hpp
 Construção padrão da classe main vista em aula.
@@ -430,156 +430,667 @@ void Window::onUpdate() {
   * std::vector<glm::vec2> positions: lista de configurações das posições inciais.
   * std::default_random_engine m_randomEngine: Seed para aleatorizar quando será gerado o próximo obstáculo.
 
-### gamedata.hpp
+ De modo geral, a window.cpp irá criar uma lista aletória de configuralções onde serão selecionados as obras que serão dispostas na tela. As configurações selecionadas serão guardadas em "allConfigs" que será o parametro para 
+m_collection. Alguns parametrôs como posição e cores serão definidos de maneira aleatória e outros como escala, altura, etc serão pré-definidos pois eram necessidades dos modelos adotados de se adequarem a cena proposta.
 
-Estrutura que define o estado atual do jogo.
+### ObjectConfiguration
+
+Estrutura que define as configurações do modelo
 <pre>
   <code>
-  #ifndef GAMEDATA_HPP_
-  #define GAMEDATA_HPP_
-  
-  #include <bitset>
-  
-  enum class Input { Idle, Up, Down };
-  enum class State { Playing, GameOver };
-  struct GameData {
-    State m_state{State::Playing};
-    Input m_input{Input::Idle};
-    GLfloat maxHigh{0.8f};
-    GLfloat minHigh{0.0f};
-    float scoreTime;
-  };
-  
-  #endif
+  struct ObjectConfiguration {
+  glm::vec2 startPosition;
+  glm::vec3 color;
+  float minHigh;
+  float maxHigh;
+  bool verticalRotate;
+  float radiusVerticalRotate;
+  float scale;
+  std::string path;
+  bool choosed;
+  float rotationSpeed;
+  float triangulesToDraw;
+};
+</code>
+</pre>
+
+* glm::vec2 startPosition : define a posição incial do modelo.
+* glm::vec3 color : define a cor do modelo.
+* float minHigh : define a posição minima do eixo y.
+* float maxHigh : define a posição máxima do eixo y
+* bool verticalRotate : defina se será necessário realizar a rotação em outro eixo para ajustar o modelo. Alguns modelos (cat.obj por exemplo) não vieram na posição adequada e necessitam deste parametro.
+* float radiusVerticalRotate : define em quanto o modelo irá rotacionar.
+* float scale : define a escala do modelo.
+* std::string path : caminho do arquivo obj do modelo. 
+* float rotationSpeed : define a velocidade de rotação
+* float triangulesToDraw : define a porcentagem de triangulos que serão desenhandos. Esse parametro foi adicionado pois alguns modelos (eye.obj) ficaram melhores sem alguns triangulos desenhados.
+
+### ground.cpp
+
+Classe que gera o chão. O código em si é idêntico ao visto em aula apenas adicionei uma linha vermelha para simular um tapete.
+
+<pre>
+<code>
+ #include "ground.hpp"
+
+void Ground::create(GLuint program) {
+  // Unit quad on the xz plane
+  std::array<glm::vec3, 4> vertices{{{-0.5f, 0.0f, +0.5f},
+                                     {-0.5f, 0.0f, -0.5f},
+                                     {+0.5f, 0.0f, +0.5f},
+                                     {+0.5f, 0.0f, -0.5f}}};
+
+  // Generate VBO
+  abcg::glGenBuffers(1, &m_VBO);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(),
+                     GL_STATIC_DRAW);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  // Create VAO and bind vertex attributes
+  abcg::glGenVertexArrays(1, &m_VAO);
+  abcg::glBindVertexArray(m_VAO);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  auto const positionAttribute{
+      abcg::glGetAttribLocation(program, "inPosition")};
+  abcg::glEnableVertexAttribArray(positionAttribute);
+  abcg::glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE, 0,
+                              nullptr);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
+  abcg::glBindVertexArray(0);
+
+  // Save location of uniform variables
+  m_modelMatrixLoc = abcg::glGetUniformLocation(program, "modelMatrix");
+  m_colorLoc = abcg::glGetUniformLocation(program, "color");
+}
+
+void Ground::paint() {
+  abcg::glBindVertexArray(m_VAO);
+
+  // Draw a grid of 2N+1 x 2N+1 tiles on the xz plane, centered around the
+  // origin
+  auto const N{5};
+  for (auto const z : iter::range(-N, N + 1)) {
+    for (auto const x : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(x, 0.0f, z));
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+
+      if (x == 0) {
+        // Set color (checkerboard pattern)
+        abcg::glUniform4f(m_colorLoc, 1.0f, 0.0, 0.0, 1.0f);
+      } else {
+        // Set color (checkerboard pattern)
+        auto const gray{(z + x) % 2 == 0 ? 1.0f : 0.5f};
+        abcg::glUniform4f(m_colorLoc, gray, gray, gray, 1.0f);
+      }
+
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+  }
+
+  abcg::glBindVertexArray(0);
+}
+
+void Ground::destroy() {
+  abcg::glDeleteBuffers(1, &m_VBO);
+  abcg::glDeleteVertexArrays(1, &m_VAO);
+}
+</code>
+</pre>
+
+* GLuint m_VAO : guarda a referência do VAO.
+* GLuint m_VBO: guarda a referência do VBO.
+* GLint m_modelMatrixLoc: guarda a localização da matriz de modelo.
+* GLint m_colorLoc: guarda a localização da cor.
+* void create(GLuint program) : método responsável por criar os vértices, VBO, VBA que serão utilizados.
+* void paint() : método responsável por desenhar o grid de quadrados.
+* void destroy() : método responsável por destruir VBO e VAO utilizados.
+
+
+### wall.cpp
+Wall é a classe responsável por desenhar as parades da sala. O código foi inspirado no ground.cpp visto em aula apenas transladei para outros planos e rotacionei (no caso das parades traseira e frontal) para se ajustarem ao plano correto pois, inicialmente, o quadrado é iniciado no plano yz.
+
+<pre>
+  <code>
+    #include "wall.hpp"
+
+void Wall::create(GLuint program) {
+
+  std::array<glm::vec3, 4> vertices{{{0.0f, -0.5f, +0.5f},
+                                     {0.0f, -0.5f, -0.5f},
+                                     {0.0f, +0.5f, +0.5f},
+                                     {0.0f, +0.5f, -0.5f}}};
+
+  // Generate VBO
+  abcg::glGenBuffers(1, &m_VBO);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+
+  abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(),
+                     GL_STATIC_DRAW);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  // Create VAO and bind vertex attributes
+  abcg::glGenVertexArrays(1, &m_VAO);
+  abcg::glBindVertexArray(m_VAO);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  auto const positionAttribute{
+      abcg::glGetAttribLocation(program, "inPosition")};
+  abcg::glEnableVertexAttribArray(positionAttribute);
+  abcg::glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE, 0,
+                              nullptr);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
+  abcg::glBindVertexArray(0);
+
+  // Save location of uniform variables
+  m_modelMatrixLoc = abcg::glGetUniformLocation(program, "modelMatrix");
+  m_colorLoc = abcg::glGetUniformLocation(program, "color");
+}
+
+void Wall::paint() {
+  abcg::glBindVertexArray(m_VAO);
+  auto const N{5};
+
+  // parede traseira
+  for (auto const x : iter::range(-N, N + 1)) {
+    for (auto const y : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(x, y, 5.0f));
+      // rotacionando modelo pois o modelo original está no espaço yz
+      model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0, 1, 0));
+
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+
+      abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
+
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+  }
+
+  // parede frontal
+  for (auto const x : iter::range(-N, N + 1)) {
+    for (auto const y : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(x, y, -5.0f));
+      // rotacionando modelo pois o modelo original está no espaço yz
+      model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0, 1, 0));
+
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+
+      abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
+
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+  }
+
+  // parede direita
+  for (auto const z : iter::range(-N, N + 1)) {
+    for (auto const y : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(5.0f, y, z));
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+
+      abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
+
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+  }
+
+  // parede esquerda
+  for (auto const z : iter::range(-N, N + 1)) {
+    for (auto const y : iter::range(-N, N + 1)) {
+      // Set model matrix as a translation matrix
+      glm::mat4 model{1.0f};
+      model = glm::translate(model, glm::vec3(-5.0f, y, z));
+      abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+
+      abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
+
+      abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+  }
+
+  abcg::glBindVertexArray(0);
+}
+
+void Wall::destroy() {
+  abcg::glDeleteBuffers(1, &m_VBO);
+  abcg::glDeleteVertexArrays(1, &m_VAO);
+}
   </code>
 </pre>
-* m_state pode ser:
-  * State::Playing: a aplicação está em modo de jogo, com o square respondendo aos comandos do jogador;
-  * State::GameOver: o jogador perdeu. Nesse caso, square não é exibido e não responde aos comandos do jogador;
-* m_input pode ser:
-  * Input::Idle : o jogador não realizou nenhuma ação enquanto square está no chão.
-  * Input::Up : o jogador pulou com square.
-  * Input::Down : square está descendo.
-* scoreTime : Representa o tempo feito pelo jogador.
-* maxHig,minHigh: Altura máxima e minima alcançada por square.
 
-### square.hpp
-Personagem utilizado pelo jogador.
+
+* GLuint m_VAO : guarda a referência do VAO.
+* GLuint m_VBO: guarda a referência do VBO.
+* GLint m_modelMatrixLoc: guarda a localização da matriz de modelo.
+* GLint m_colorLoc: guarda a localização da cor.
+* void create(GLuint program) : método responsável por criar os vértices, VBO, VBA que serão utilizados.
+* void paint() : método responsável por desenhar o grid de quadrados.
+* void destroy() : método responsável por destruir VBO e VAO utilizados.
+
+
+### base.cpp
+
+Classe responsável por desenhar a base cilindrica que ficará embaixo da estátua.
 <pre>
-<code>
-#ifndef SQUARE_HPP_
-#define SQUARE_HPP_
+  <code>
+#include "base.hpp"
+#include <unordered_map>
 
-#include "abcgOpenGL.hpp"
-#include "gamedata.hpp"
-#include <list>
-class Square {
-public:
-  void create(GLuint program);
-  void paint(GameData const &gameData);
-  void destroy();
-  void update(GameData const &gameData, float deltaTime);
-  glm::vec2 getCenter();
-
-  GLfloat m_translation{0.0};
-  glm::vec4 m_color{1};
-  glm::vec2 position{-0.85f, 0.03f};
-  GLfloat size{0.1f};
-  GLfloat jumpDistance{0.8f};
-  GLfloat jumpTime{0.4};
-  GLfloat fallTime{0.35};
-
-private:
-  GLuint m_program{};
-  GLuint m_VAO{};
-  GLuint m_VBO{};
-  GLint m_translationLoc{};
-};
-#endif
-
-</code>
-</pre>
-
-* glm::vec2 getCenter: Método que retorna o centro atual do objeto.
-* GLfloat m_translation: Referência para guardar a alteração da posição do objeto.
-* glm::vec2 position: Posição inicial.
-* GLfloat size: Tamanho do objeto.
-* GLfloat jumpDistance: Distância máxima de pulo.
-* GLfloat jumpTime: Tempo de subida do pulo.
-* GLfloat fallTime: Tempo de descida do pulo.
-* GLint m_translationLoc: Referência para a variável m_translation que estará na GPU.
-  
-
-### obstacles.hpp
-
-Classe que gerencia os obstáculos. No caso, os obstáculos são gerados em um espaço de tempo aleatório e destruídos assim que percorrerem um determinado espaço da tela.
-<pre>
-<code>
-  #ifndef OBSTACLE_HPP_
-#define OBSTACLE_HPP_
-
-#include <list>
-#include <random>
-
-#include "abcgOpenGL.hpp"
-
-#include "gamedata.hpp"
-#include "square.hpp"
-
-class Obstacles {
-public:
-  void create(GLuint program);
-  void paint(GameData const &gameData);
-  void destroy();
-  void update(float deltaTime);
-  GLfloat maxDistance{5.5};
-  GLfloat distanceTime{3};
-  struct Obstacle {
-    GLuint m_VAO{};
-    GLuint m_VBO{};
-    GLfloat m_translation{0.0};
-    bool remove{false};
-    glm::vec4 m_color{1};
-    glm::vec2 position{0.99f, 0.08f};
-    float m_height{0.2f};
-    float m_base{0.3f};
-    //GLfloat translationSpace{0.0001f};
-    GLint m_translationLoc{};
-
-    glm::vec2 getCenter() {
-      return glm::vec2{position.x + m_translation, position.y};
-    };
-
-    void destroy() {
-      abcg::glDeleteBuffers(1, &m_VBO);
-      abcg::glDeleteVertexArrays(1, &m_VAO);
-    };
-  };
-
-  std::list<Obstacle> m_obstacles;
-
-  Obstacle makeObstacle();
-
-private:
-  GLuint m_program{};
+// Explicit specialization of std::hash for Vertex
+template <> struct std::hash<Vertex> {
+  size_t operator()(Vertex const &vertex) const noexcept {
+    auto const h1{std::hash<glm::vec3>()(vertex.position)};
+    return h1;
+  }
 };
 
-#endif
-</code>
+void Base::loadModelFromFile(std::string_view path) {
+  tinyobj::ObjReader reader;
+
+  if (!reader.ParseFromFile(path.data())) {
+    if (!reader.Error().empty()) {
+      throw abcg::RuntimeError(
+          fmt::format("Failed to load model {} ({})", path, reader.Error()));
+    }
+    throw abcg::RuntimeError(fmt::format("Failed to load model {}", path));
+  }
+
+  if (!reader.Warning().empty()) {
+    fmt::print("Warning: {}\n", reader.Warning());
+  }
+
+  auto const &attributes{reader.GetAttrib()};
+  auto const &shapes{reader.GetShapes()};
+
+  m_vertices.clear();
+  m_indices.clear();
+
+  // A key:value map with key=Vertex and value=index
+  std::unordered_map<Vertex, GLuint> hash{};
+
+  // Loop over shapes
+  for (auto const &shape : shapes) {
+    // Loop over indices
+    for (auto const offset : iter::range(shape.mesh.indices.size())) {
+      // Access to vertex
+      auto const index{shape.mesh.indices.at(offset)};
+
+      // Vertex position
+      auto const startIndex{3 * index.vertex_index};
+      auto const vx{attributes.vertices.at(startIndex + 0)};
+      auto const vy{attributes.vertices.at(startIndex + 1)};
+      auto const vz{attributes.vertices.at(startIndex + 2)};
+
+      Vertex const vertex{.position = {vx, vy, vz}};
+
+      // If map doesn't contain this vertex
+      if (!hash.contains(vertex)) {
+        // Add this index (size of m_vertices)
+        hash[vertex] = m_vertices.size();
+        // Add this vertex
+        m_vertices.push_back(vertex);
+      }
+
+      m_indices.push_back(hash[vertex]);
+    }
+  }
+}
+
+void Base::create(GLuint program, std::string_view path, glm::vec2 position) {
+  startPosition = position;
+  m_program = program;
+
+  // Get location of uniform variables
+  m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
+  m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
+  m_modelMatrixLocation = abcg::glGetUniformLocation(m_program, "modelMatrix");
+  m_colorLocation = abcg::glGetUniformLocation(m_program, "color");
+
+  // Load model
+  loadModelFromFile(path);
+
+  // Generate VBO
+  abcg::glGenBuffers(1, &m_VBO);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  abcg::glBufferData(GL_ARRAY_BUFFER,
+                     sizeof(m_vertices.at(0)) * m_vertices.size(),
+                     m_vertices.data(), GL_STATIC_DRAW);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  // Generate EBO
+  abcg::glGenBuffers(1, &m_EBO);
+  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+  abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                     sizeof(m_indices.at(0)) * m_indices.size(),
+                     m_indices.data(), GL_STATIC_DRAW);
+  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  // Create VAO
+  abcg::glGenVertexArrays(1, &m_VAO);
+
+  // Bind vertex attributes to current VAO
+  abcg::glBindVertexArray(m_VAO);
+
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  auto const positionAttribute{
+      abcg::glGetAttribLocation(m_program, "inPosition")};
+  abcg::glEnableVertexAttribArray(positionAttribute);
+  abcg::glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE,
+                              sizeof(Vertex), nullptr);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+
+  // End of binding to current VAO
+  abcg::glBindVertexArray(0);
+}
+
+void Base::paint() {
+  abcg::glBindVertexArray(m_VAO);
+
+  //  Draw white bunny
+  glm::mat4 model{1.0f};
+  model =
+      glm::translate(model, glm::vec3(startPosition.x, high, startPosition.y));
+  model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1, 0, 0));
+  model = glm::scale(model, glm::vec3(0.1f));
+
+  abcg::glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &model[0][0]);
+  abcg::glUniform4f(m_colorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
+  abcg::glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT,
+                       nullptr);
+
+  abcg::glBindVertexArray(0);
+}
+
+void Base::destroy() {
+  abcg::glDeleteBuffers(1, &m_VBO);
+  abcg::glDeleteVertexArrays(1, &m_VAO);
+  abcg::glDeleteBuffers(1, &m_EBO);
+}
+  </code>
 </pre>
 
-  * GLfloat maxDistance: Distância máxima que será percorrida por cada obstáculo antes de ser destruído.
-  * GLfloat distanceTime: Tempo que será utilizado para o obstáculo percorrer a distância.
-  * A estrutura Obstacle será composta por:
-    * Obstacle:: GLfloat m_translation: Referência para guardar a alteração da posição do obstacle.
-    * Obstacle:: bool remove: Flag utilizada para marcar quais obstáculos serão destruídos.
-    * Obstacle:: glm::vec2 position: Posição inicial.
-    * Obstacle:: float m_height: Tamanho da altura do obstáculo.
-    * Obstacle:: float m_base: Tamanho da base do obstáculo. 
-    * Obstacle:: GLint m_translationLoc: Referência para a variável m_translation que estará na GPU.
-    * Obstacle:: glm::vec2 getCenter():  Método que retorna a posiçao atual do centro do objeto.
-    * Obstacle:: void destroy() : Destrói o obstáculo.
+* GLuint m_program : referência do programa utilizado.
+* GLuint m_VAO: referência do VAO.
+* GLuint m_VBO: referência do VBO.
+* GLuint m_EBO: referência do EBO.
+* GLint m_viewMatrixLocation: referência da localização da matriz de visão.
+* GLint m_projMatrixLocation: referência da localização da matriz de projeção.
+* GLint m_modelMatrixLocation: referência da localização da matriz do modelo.
+* GLint m_colorLocation: referência da localização da cor.
+* std::vector<Vertex> m_vertices : conjunto de vértices do modelo.
+* std::vector<GLuint> m_indices : conjunto de índices do modelo.
+* glm::vec2 startPosition : posição inicial.
+* float high: altura da base. 
+* void loadModelFromFile(std::string_view path) : método utilizado para carregar o modelo.
+* void create(GLuint program, std::string_view path, glm::vec2 position) : método utilizado para carregar os véticos, criar VBO, VAO, EBO que serão utilizados para gerar o modelo.
+* void paint() : método responsável por desenhar a base.
+* void destroy() : método responsável por destruir os recursos utilizados.
 
-  * std::list<Obstacle> m_obstacles : Lista utilizada para gerenciar os obstáculos.
-  * Obstacle makeObstacle(): Método utilizado para criar um novo obstáculo.
-  * void destroy(): Destrói todos os obstáculos.
+
+### estatue.cpp
+Classe responsável por desenhar a estátua com base nas configurações selecionadas.
+
+<pre>
+  <code>
+#include "estatue.hpp"
+#include <unordered_map>
+
+// Explicit specialization of std::hash for Vertex
+template <> struct std::hash<Vertex> {
+  size_t operator()(Vertex const &vertex) const noexcept {
+    auto const h1{std::hash<glm::vec3>()(vertex.position)};
+    return h1;
+  }
+};
+
+void Estatue::loadModelFromFile(std::string_view path) {
+  tinyobj::ObjReader reader;
+
+  if (!reader.ParseFromFile(path.data())) {
+    if (!reader.Error().empty()) {
+      throw abcg::RuntimeError(
+          fmt::format("Failed to load model {} ({})", path, reader.Error()));
+    }
+    throw abcg::RuntimeError(fmt::format("Failed to load model {}", path));
+  }
+
+  if (!reader.Warning().empty()) {
+    fmt::print("Warning: {}\n", reader.Warning());
+  }
+
+  auto const &attributes{reader.GetAttrib()};
+  auto const &shapes{reader.GetShapes()};
+
+  m_vertices.clear();
+  m_indices.clear();
+
+  // A key:value map with key=Vertex and value=index
+  std::unordered_map<Vertex, GLuint> hash{};
+
+  // Loop over shapes
+  for (auto const &shape : shapes) {
+    // Loop over indices
+    for (auto const offset : iter::range(shape.mesh.indices.size())) {
+      // Access to vertex
+      auto const index{shape.mesh.indices.at(offset)};
+
+      // Vertex position
+      auto const startIndex{3 * index.vertex_index};
+      auto const vx{attributes.vertices.at(startIndex + 0)};
+      auto const vy{attributes.vertices.at(startIndex + 1)};
+      auto const vz{attributes.vertices.at(startIndex + 2)};
+
+      Vertex const vertex{.position = {vx, vy, vz}};
+
+      // If map doesn't contain this vertex
+      if (!hash.contains(vertex)) {
+        // Add this index (size of m_vertices)
+        hash[vertex] = m_vertices.size();
+        // Add this vertex
+        m_vertices.push_back(vertex);
+      }
+
+      m_indices.push_back(hash[vertex]);
+    }
+  }
+}
+
+void Estatue::create(GLuint program, ObjectConfiguration configuration) {
+
+  // Configurando objeto
+  m_program = program;
+
+  startPosition.x = configuration.startPosition.x;
+  startPosition.y = configuration.startPosition.y;
+  color = configuration.color;
+  minHigh = configuration.minHigh;
+  maxHigh = configuration.maxHigh;
+  verticalRotate = configuration.verticalRotate;
+  radiusVerticalRotate = configuration.radiusVerticalRotate;
+  scale = configuration.scale;
+  path = configuration.path;
+  choosed = configuration.choosed;
+  rotationSpeed = configuration.rotationSpeed;
+  high = configuration.minHigh;
+  triangulesToDraw = configuration.triangulesToDraw;
+
+  // Variaveis uniformes
+  m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
+  m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
+  m_modelMatrixLocation = abcg::glGetUniformLocation(m_program, "modelMatrix");
+  m_colorLocation = abcg::glGetUniformLocation(m_program, "color");
+
+  // Carregando modelo
+  loadModelFromFile(path);
+
+  // Gerando VBO
+  abcg::glGenBuffers(1, &m_VBO);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  abcg::glBufferData(GL_ARRAY_BUFFER,
+                     sizeof(m_vertices.at(0)) * m_vertices.size(),
+                     m_vertices.data(), GL_STATIC_DRAW);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  // Gerando EBO
+  abcg::glGenBuffers(1, &m_EBO);
+  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+  abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                     sizeof(m_indices.at(0)) * m_indices.size(),
+                     m_indices.data(), GL_STATIC_DRAW);
+  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  // Criando VAO
+  abcg::glGenVertexArrays(1, &m_VAO);
+
+  abcg::glBindVertexArray(m_VAO);
+
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  auto const positionAttribute{
+      abcg::glGetAttribLocation(m_program, "inPosition")};
+  abcg::glEnableVertexAttribArray(positionAttribute);
+  abcg::glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE,
+                              sizeof(Vertex), nullptr);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+
+  abcg::glBindVertexArray(0);
+}
+
+void Estatue::update(float deltaTime) {
+
+  // Calculando angulo de rotação
+  radius += rotationSpeed * deltaTime;
+
+  // para nao estourar a variável
+  if (radius >= 360)
+    radius -= 360;
+
+  // alterando altura y do modelo
+  if (up)
+    high += 0.1 * deltaTime;
+  else
+    high -= 0.1 * deltaTime;
+
+  // Verificando se o objeto deve subir ou descer
+  if (high >= maxHigh)
+    up = false;
+  if (high <= minHigh)
+    up = true;
+}
+void Estatue::paint() {
+
+  abcg::glBindVertexArray(m_VAO);
+
+  // Desenhando modelo
+  glm::mat4 model{1.0f};
+  model =
+      glm::translate(model, glm::vec3(startPosition.x, high, startPosition.y));
+  model = glm::rotate(model, radius, glm::vec3(0, 1, 0));
+  // Caso seja necessário rotação
+  if (verticalRotate)
+    model = glm::rotate(model, glm::radians(radiusVerticalRotate),
+                        glm::vec3(1, 0, 0));
+
+  model = glm::scale(model, glm::vec3(scale));
+
+  abcg::glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &model[0][0]);
+  abcg::glUniform4f(m_colorLocation, color.x, color.y, color.z, 1.0f);
+
+  auto n{m_indices.size()};
+  if (triangulesToDraw != 1.0f) {
+    n = (int)n * triangulesToDraw;
+  }
+
+  abcg::glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, nullptr);
+
+  abcg::glBindVertexArray(0);
+}
+
+void Estatue::destroy() {
+  abcg::glDeleteBuffers(1, &m_VBO);
+  abcg::glDeleteVertexArrays(1, &m_VAO);
+  abcg::glDeleteBuffers(1, &m_EBO);
+}
+  </code>
+</pre>
+
+Os campos são os mesmos do objeto ObjectConfiguration.
+
+* void create(GLuint program, ObjectConfiguration configuration) : Configura o modelo com base na configuração recebida por parâmetro.
+* void paint() : método responsável por desenhar o modelo.
+* void update(float deltaTime) : método responsável por determinar a posição do modelo.
+* void destroy() : método responsável por eliminar os recursos utilizados.
+
+### collection.cpp
+Classe responsável por gerenciar a lista de bases e estátuas.
+<pre>
+  <code>
+    
+#include "collection.hpp"
+
+void Collection::create(GLuint program,
+                        std::vector<ObjectConfiguration> configs,
+                        std::string_view basePath) {
+
+  m_program = program;
+  objBasePath = basePath;
+
+  for (auto &conf : configs) {
+    Estatue estatue;
+    Base base;
+
+    estatue.create(m_program, conf);
+    base.create(m_program, objBasePath, conf.startPosition);
+
+    m_estatues.push_back(estatue);
+    m_bases.push_back(base);
+  }
+}
+
+void Collection::paint() {
+
+  for (auto &estatue : m_estatues) {
+    estatue.paint();
+  }
+
+  for (auto &base : m_bases) {
+    base.paint();
+  }
+}
+
+void Collection::destroy() {
+  for (auto &estatue : m_estatues) {
+    estatue.destroy();
+  }
+
+  for (auto &base : m_bases) {
+    base.destroy();
+  }
+}
+
+void Collection::update(float deltaTime) {
+
+  for (auto &estatue : m_estatues) {
+    estatue.update(deltaTime);
+  }
+}
+  </code>
+</pre>
+
+* GLuint m_program: referência do programa.
+* std::vector<Base> m_bases : lista de bases.
+* std::vector<Estatue> m_estatues : lista de estátuas.
+* std::string_view objBasePath : caminho do arquivo obj da base.
+* void create(GLuint program, std::vector<ObjectConfiguration> configs, std::string_view basePath) : método responsável por criar e configurar a lista de bases e estátuas.
+* void paint() : método responsável por desenhar a coleção de bases e estátuas.
+* void update(float deltaTime): método responsável por atualizar a posição das estátuas.
+* void destroy() : método responsável por liberar os recursos utilizados.

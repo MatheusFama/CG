@@ -51,8 +51,8 @@ O projeto foi separado nas seguintes classes:
 │   window.cpp
 │
 └───assets/
-    │   lookat.frag
-    └   lookat.vert</code></pre>
+    │   futuristicmuseum.frag
+    └   futuristicmuseum.vert</code></pre>
 
 ### Cenário
 O cenário será formado pelos seguintes objetos:
@@ -344,9 +344,9 @@ void Window::onCreate() {
 
   // Criando program
   m_program =
-      abcg::createOpenGLProgram({{.source = assetsPath + "lookat.vert",
+      abcg::createOpenGLProgram({{.source = assetsPath + "futuristicmuseum.vert",
                                   .stage = abcg::ShaderStage::Vertex},
-                                 {.source = assetsPath + "lookat.frag",
+                                 {.source = assetsPath + "futuristicmuseum.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
   abcg::glClearColor(0, 0, 0, 1);

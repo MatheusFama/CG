@@ -25,9 +25,6 @@ protected:
 private:
   glm::ivec2 m_viewportSize{};
 
-  GLuint m_VAO{};
-  GLuint m_VBO{};
-  GLuint m_EBO{};
   GLuint m_program{};
 
   GLint m_viewMatrixLocation{};

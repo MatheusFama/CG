@@ -213,13 +213,13 @@ void Window::onCreate() {
        0.2f, 0.45f, false, -90.0f, 0.0005f, trex, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  // auto const horsePath = assetsPath + "horse.obj";
-  // allConfigs.push_back(
-  //     {glm::vec2(0.0f, 0.0f),
-  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-  //                randomColor(m_randomEngine)),
-  //      0.2f, 0.45f, true, -90.0f, 0.0025f, horsePath, false,
-  //      randomSpeed(m_randomEngine), 1.0f});
+  auto const horsePath = assetsPath + "horse.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.0025f, horsePath, false,
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto si = (int)allConfigs.size() - 1;
   std::uniform_int_distribution randomPosition{0, si};

@@ -77,21 +77,21 @@ void Window::onCreate() {
        0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  // auto const catPath = assetsPath + "cat.obj";
-  // allConfigs.push_back(
-  //     {glm::vec2(0.0f, 0.0f),
-  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-  //                randomColor(m_randomEngine)),
-  //      0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
-  //      randomSpeed(m_randomEngine), 1.0f});
+  auto const catPath = assetsPath + "cat.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
 
-  // auto const dogPath = assetsPath + "dog.obj";
-  // allConfigs.push_back(
-  //     {glm::vec2(0.0f, 0.0f),
-  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-  //                randomColor(m_randomEngine)),
-  //      0.2f, 0.45f, true, -90.0f, 0.005f, dogPath, false,
-  //      randomSpeed(m_randomEngine), 1.0f});
+  auto const dogPath = assetsPath + "dog.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.005f, dogPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
 
   auto const dolphinPath = assetsPath + "dolphin.obj";
   allConfigs.push_back(
@@ -125,13 +125,13 @@ void Window::onCreate() {
        0.3f, 0.55f, false, -90.0f, 0.001f, dragonPath, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  // auto const birdPath = assetsPath + "bird.obj";
-  // allConfigs.push_back(
-  //     {glm::vec2(0.0f, 0.0f),
-  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-  //                randomColor(m_randomEngine)),
-  //      0.2f, 0.45f, true, -90.0f, 0.01f, birdPath, false,
-  //      randomSpeed(m_randomEngine), 1.0f});
+  auto const birdPath = assetsPath + "bird.obj";
+  allConfigs.push_back(
+      {glm::vec2(0.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.2f, 0.45f, true, -90.0f, 0.01f, birdPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
 
   // auto const alienPath = assetsPath + "alien_dog.obj";
   // allConfigs.push_back(

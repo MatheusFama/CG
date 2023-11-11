@@ -57,14 +57,14 @@ void Window::onCreate() {
   positions.push_back(glm::vec2(1.0f, -2.0f));
   positions.push_back(glm::vec2(1.0f, -3.0f));
 
-  positions.push_back(glm::vec2(-2.5f, 0.0f));
-  positions.push_back(glm::vec2(-2.5f, -1.0f));
-  positions.push_back(glm::vec2(-2.5f, -2.0f));
-  positions.push_back(glm::vec2(-2.5f, -3.0f));
-  positions.push_back(glm::vec2(2.5f, 0.0f));
-  positions.push_back(glm::vec2(2.5f, -1.0f));
-  positions.push_back(glm::vec2(2.5f, -2.0f));
-  positions.push_back(glm::vec2(2.5f, -3.0f));
+  // positions.push_back(glm::vec2(-2.5f, 0.0f));
+  // positions.push_back(glm::vec2(-2.5f, -1.0f));
+  // positions.push_back(glm::vec2(-2.5f, -2.0f));
+  // positions.push_back(glm::vec2(-2.5f, -3.0f));
+  // positions.push_back(glm::vec2(2.5f, 0.0f));
+  // positions.push_back(glm::vec2(2.5f, -1.0f));
+  // positions.push_back(glm::vec2(2.5f, -2.0f));
+  // positions.push_back(glm::vec2(2.5f, -3.0f));
 
   // Lista com todas as configurações dos modelos
   allConfigs.clear();
@@ -77,21 +77,21 @@ void Window::onCreate() {
        0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  auto const catPath = assetsPath + "cat.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  // auto const catPath = assetsPath + "cat.obj";
+  // allConfigs.push_back(
+  //     {glm::vec2(0.0f, 0.0f),
+  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+  //                randomColor(m_randomEngine)),
+  //      0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
+  //      randomSpeed(m_randomEngine), 1.0f});
 
-  auto const dogPath = assetsPath + "dog.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.005f, dogPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  // auto const dogPath = assetsPath + "dog.obj";
+  // allConfigs.push_back(
+  //     {glm::vec2(0.0f, 0.0f),
+  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+  //                randomColor(m_randomEngine)),
+  //      0.2f, 0.45f, true, -90.0f, 0.005f, dogPath, false,
+  //      randomSpeed(m_randomEngine), 1.0f});
 
   auto const dolphinPath = assetsPath + "dolphin.obj";
   allConfigs.push_back(
@@ -125,29 +125,29 @@ void Window::onCreate() {
        0.3f, 0.55f, false, -90.0f, 0.001f, dragonPath, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  auto const birdPath = assetsPath + "bird.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.01f, birdPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  // auto const birdPath = assetsPath + "bird.obj";
+  // allConfigs.push_back(
+  //     {glm::vec2(0.0f, 0.0f),
+  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+  //                randomColor(m_randomEngine)),
+  //      0.2f, 0.45f, true, -90.0f, 0.01f, birdPath, false,
+  //      randomSpeed(m_randomEngine), 1.0f});
 
-  auto const alienPath = assetsPath + "alien_dog.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  // auto const alienPath = assetsPath + "alien_dog.obj";
+  // allConfigs.push_back(
+  //     {glm::vec2(0.0f, 0.0f),
+  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+  //                randomColor(m_randomEngine)),
+  //      0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false,
+  //      randomSpeed(m_randomEngine), 1.0f});
 
-  auto const spider_monkeyPath = assetsPath + "spider_monkey.obj";
-  allConfigs.push_back(
-      {glm::vec2(-1.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  // auto const spider_monkeyPath = assetsPath + "spider_monkey.obj";
+  // allConfigs.push_back(
+  //     {glm::vec2(-1.0f, 0.0f),
+  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+  //                randomColor(m_randomEngine)),
+  //      0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false,
+  //      randomSpeed(m_randomEngine), 1.0f});
 
   auto const humanPath = assetsPath + "humanbody.obj";
   allConfigs.push_back(
@@ -189,13 +189,13 @@ void Window::onCreate() {
        0.2f, 0.45f, true, -90.0f, 0.01f, skullPath, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  auto const handPath = assetsPath + "hand.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  // auto const handPath = assetsPath + "hand.obj";
+  // allConfigs.push_back(
+  //     {glm::vec2(0.0f, 0.0f),
+  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+  //                randomColor(m_randomEngine)),
+  //      0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false,
+  //      randomSpeed(m_randomEngine), 1.0f});
 
   auto const stonePath = assetsPath + "stone.obj";
   allConfigs.push_back(
@@ -213,13 +213,13 @@ void Window::onCreate() {
        0.2f, 0.45f, false, -90.0f, 0.0005f, trex, false,
        randomSpeed(m_randomEngine), 1.0f});
 
-  auto const horsePath = assetsPath + "horse.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.0025f, horsePath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  // auto const horsePath = assetsPath + "horse.obj";
+  // allConfigs.push_back(
+  //     {glm::vec2(0.0f, 0.0f),
+  //      glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+  //                randomColor(m_randomEngine)),
+  //      0.2f, 0.45f, true, -90.0f, 0.0025f, horsePath, false,
+  //      randomSpeed(m_randomEngine), 1.0f});
 
   auto si = (int)allConfigs.size() - 1;
   std::uniform_int_distribution randomPosition{0, si};
@@ -247,11 +247,11 @@ void Window::onCreate() {
   abcg::glEnable(GL_DEPTH_TEST);
 
   // Criando program
-  m_program =
-      abcg::createOpenGLProgram({{.source = assetsPath + "lookat.vert",
-                                  .stage = abcg::ShaderStage::Vertex},
-                                 {.source = assetsPath + "lookat.frag",
-                                  .stage = abcg::ShaderStage::Fragment}});
+  m_program = abcg::createOpenGLProgram(
+      {{.source = assetsPath + "futuristicmuseum.vert",
+        .stage = abcg::ShaderStage::Vertex},
+       {.source = assetsPath + "futuristicmuseum.frag",
+        .stage = abcg::ShaderStage::Fragment}});
 
   abcg::glClearColor(0, 0, 0, 1);
 

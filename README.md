@@ -344,9 +344,9 @@ void Window::onCreate() {
 
   // Criando program
   m_program =
-      abcg::createOpenGLProgram({{.source = assetsPath + "futuristicmuseum.vert",
+      abcg::createOpenGLProgram({{.source = assetsPath + "teste.vert",
                                   .stage = abcg::ShaderStage::Vertex},
-                                 {.source = assetsPath + "futuristicmuseum.frag",
+                                 {.source = assetsPath + "teste.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
   abcg::glClearColor(0, 0, 0, 1);

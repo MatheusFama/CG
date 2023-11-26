@@ -10,6 +10,7 @@ public:
   void destroy();
 
 private:
+  GLuint m_program{};
   GLuint m_VAO{};
   GLuint m_VBO{};
 

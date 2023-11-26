@@ -57,25 +57,17 @@ void Window::onCreate() {
   positions.push_back(glm::vec2(1.0f, -2.0f));
   positions.push_back(glm::vec2(1.0f, -3.0f));
 
-  positions.push_back(glm::vec2(-2.5f, 0.0f));
-  positions.push_back(glm::vec2(-2.5f, -1.0f));
-  positions.push_back(glm::vec2(-2.5f, -2.0f));
-  positions.push_back(glm::vec2(-2.5f, -3.0f));
-  positions.push_back(glm::vec2(2.5f, 0.0f));
-  positions.push_back(glm::vec2(2.5f, -1.0f));
-  positions.push_back(glm::vec2(2.5f, -2.0f));
-  positions.push_back(glm::vec2(2.5f, -3.0f));
+  // positions.push_back(glm::vec2(-2.5f, 0.0f));
+  // positions.push_back(glm::vec2(-2.5f, -1.0f));
+  // positions.push_back(glm::vec2(-2.5f, -2.0f));
+  // positions.push_back(glm::vec2(-2.5f, -3.0f));
+  // positions.push_back(glm::vec2(2.5f, 0.0f));
+  // positions.push_back(glm::vec2(2.5f, -1.0f));
+  // positions.push_back(glm::vec2(2.5f, -2.0f));
+  // positions.push_back(glm::vec2(2.5f, -3.0f));
 
   // Lista com todas as configurações dos modelos
   allConfigs.clear();
-
-  auto const bunnyPath = assetsPath + "bunny.obj";
-  allConfigs.push_back(
-      {glm::vec2(-1.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
 
   auto const catPath = assetsPath + "cat.obj";
   allConfigs.push_back(
@@ -83,6 +75,14 @@ void Window::onCreate() {
        glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
                  randomColor(m_randomEngine)),
        0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
+       randomSpeed(m_randomEngine), 1.0f});
+
+  auto const bunnyPath = assetsPath + "bunny.obj";
+  allConfigs.push_back(
+      {glm::vec2(-1.0f, 0.0f),
+       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
+                 randomColor(m_randomEngine)),
+       0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false,
        randomSpeed(m_randomEngine), 1.0f});
 
   auto const dogPath = assetsPath + "dog.obj";
@@ -247,7 +247,13 @@ void Window::onCreate() {
   abcg::glEnable(GL_DEPTH_TEST);
 
   // Criando program
-  m_program = abcg::createOpenGLProgram(
+  m_program =
+      abcg::createOpenGLProgram({{.source = assetsPath + "phong.vert",
+                                  .stage = abcg::ShaderStage::Vertex},
+                                 {.source = assetsPath + "phong.frag",
+                                  .stage = abcg::ShaderStage::Fragment}});
+
+  base_program = abcg::createOpenGLProgram(
       {{.source = assetsPath + "futuristicmuseum.vert",
         .stage = abcg::ShaderStage::Vertex},
        {.source = assetsPath + "futuristicmuseum.frag",
@@ -256,14 +262,14 @@ void Window::onCreate() {
   abcg::glClearColor(0, 0, 0, 1);
 
   // Localizacao das variaveis uniformes
-  m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
-  m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
+  // m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
+  // m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
 
   auto const objBasePath = assetsPath + "cilindro.obj";
-  m_collection.create(m_program, allConfigs, objBasePath);
+  m_collection.create(m_program, base_program, allConfigs, objBasePath);
 
-  m_ground.create(m_program);
-  m_wall.create(m_program);
+  m_ground.create(base_program);
+  m_wall.create(base_program);
 }
 
 void Window::onPaint() {
@@ -271,22 +277,23 @@ void Window::onPaint() {
 
   abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
 
-  abcg::glUseProgram(m_program);
+  // abcg::glUseProgram(m_program);
 
   // Configurando as matrizes de projeçao e visao
-  abcg::glUniformMatrix4fv(m_viewMatrixLocation, 1, GL_FALSE,
-                           &m_camera.getViewMatrix()[0][0]);
-  abcg::glUniformMatrix4fv(m_projMatrixLocation, 1, GL_FALSE,
-                           &m_camera.getProjMatrix()[0][0]);
+  // abcg::glUniformMatrix4fv(m_viewMatrixLocation, 1, GL_FALSE,
+  //                          &m_camera.getViewMatrix()[0][0]);
+  // abcg::glUniformMatrix4fv(m_projMatrixLocation, 1, GL_FALSE,
+  //                          &m_camera.getProjMatrix()[0][0]);
 
   // Desenhando a coleçao de obras
-  m_collection.paint();
+  m_collection.paint(m_camera.getViewMatrix(), m_camera.getViewMatrix(),
+                     m_camera.getProjMatrix());
 
   // Desenhando o chao
   m_ground.paint();
   m_wall.paint();
 
-  abcg::glUseProgram(0);
+  // abcg::glUseProgram(0);
 }
 
 void Window::onPaintUI() { abcg::OpenGLWindow::onPaintUI(); }
@@ -298,8 +305,8 @@ void Window::onResize(glm::ivec2 const &size) {
 
 void Window::onDestroy() {
 
-  m_ground.destroy();
-  m_wall.destroy();
+  // m_ground.destroy();
+  // m_wall.destroy();
 
   m_collection.destroy();
 

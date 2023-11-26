@@ -1,6 +1,7 @@
 #include "ground.hpp"
 
 void Ground::create(GLuint program) {
+  m_program = program;
   // Unit quad on the xz plane
   std::array<glm::vec3, 4> vertices{{{-0.5f, 0.0f, +0.5f},
                                      {-0.5f, 0.0f, -0.5f},
@@ -32,6 +33,8 @@ void Ground::create(GLuint program) {
 }
 
 void Ground::paint() {
+  abcg::glUseProgram(m_program);
+
   abcg::glBindVertexArray(m_VAO);
 
   // Draw a grid of 2N+1 x 2N+1 tiles on the xz plane, centered around the
@@ -58,6 +61,8 @@ void Ground::paint() {
   }
 
   abcg::glBindVertexArray(0);
+
+  abcg::glUseProgram(0);
 }
 
 void Ground::destroy() {

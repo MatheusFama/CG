@@ -1,7 +1,7 @@
 #include "wall.hpp"
 
 void Wall::create(GLuint program) {
-
+  m_program = program;
   std::array<glm::vec3, 4> vertices{{{0.0f, -0.5f, +0.5f},
                                      {0.0f, -0.5f, -0.5f},
                                      {0.0f, +0.5f, +0.5f},
@@ -33,6 +33,8 @@ void Wall::create(GLuint program) {
 }
 
 void Wall::paint() {
+  abcg::glUseProgram(m_program);
+
   abcg::glBindVertexArray(m_VAO);
   auto const N{5};
 
@@ -99,6 +101,7 @@ void Wall::paint() {
   }
 
   abcg::glBindVertexArray(0);
+  abcg::glUseProgram(0);
 }
 
 void Wall::destroy() {

@@ -3,8 +3,15 @@
 
 #include "abcgOpenGL.hpp"
 
+// struct Vertex {
+//   glm::vec3 position;
+
+//   friend bool operator==(Vertex const &, Vertex const &) = default;
+// };
+
 struct Vertex {
-  glm::vec3 position;
+  glm::vec3 position{};
+  glm::vec3 normal{};
 
   friend bool operator==(Vertex const &, Vertex const &) = default;
 };

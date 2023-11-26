@@ -3,7 +3,7 @@
 
 #include "abcgOpenGL.hpp"
 
-#include "base.hpp"
+// #include "base.hpp"
 #include "camera.hpp"
 #include "collection.hpp"
 #include "common.hpp"
@@ -26,6 +26,7 @@ private:
   glm::ivec2 m_viewportSize{};
 
   GLuint m_program{};
+  GLuint base_program{};
 
   GLint m_viewMatrixLocation{};
   GLint m_projMatrixLocation{};

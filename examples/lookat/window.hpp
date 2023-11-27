@@ -34,16 +34,6 @@ private:
   // glm::mat4 m_modelMatrix{1.0f};
   glm::mat4 m_viewMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
-
-  // Light and material properties
-  glm::vec4 m_lightDir{0.5f, -1.0f, 0.0f, 0.0f};
-  glm::vec4 m_Ia{1.0f};
-  glm::vec4 m_Id{1.0f};
-  glm::vec4 m_Is{1.0f};
-  glm::vec4 m_Ka{0.1f, 0.1f, 0.1f, 1.0f};
-  glm::vec4 m_Kd{0.7f, 0.7f, 0.7f, 1.0f};
-  glm::vec4 m_Ks{1.0f};
-  float m_shininess{25.0f};
   float m_rotation{0.0f};
 
   Camera m_camera;
@@ -51,6 +41,17 @@ private:
   float m_truckSpeed{};
   float m_panSpeed{};
 
+  int m_mappingMode{};
+
+  // Light and material properties
+  glm::vec4 m_lightDir{-1.0f, -1.0f, -1.0f, 0.0f};
+  glm::vec4 m_Ia{1.0f};
+  glm::vec4 m_Id{1.0f};
+  glm::vec4 m_Is{1.0f};
+  glm::vec4 m_Ka{};
+  glm::vec4 m_Kd{};
+  glm::vec4 m_Ks{};
+  float m_shininess{};
   // Ground m_ground;
 };
 

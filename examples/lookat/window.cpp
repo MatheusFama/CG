@@ -48,9 +48,9 @@ void Window::onCreate() {
 
   // Create program
   m_program =
-      abcg::createOpenGLProgram({{.source = assetsPath + "phong.vert",
+      abcg::createOpenGLProgram({{.source = assetsPath + "normalmapping.vert",
                                   .stage = abcg::ShaderStage::Vertex},
-                                 {.source = assetsPath + "phong.frag",
+                                 {.source = assetsPath + "normalmapping.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
   // Get location of uniform variables
@@ -59,10 +59,18 @@ void Window::onCreate() {
   m_modelMatrixLocation = abcg::glGetUniformLocation(m_program, "modelMatrix");
   m_modelNormalMatrixLoc =
       abcg::glGetUniformLocation(m_program, "normalMatrix");
-
+  m_mappingMode = 3;
   // Load model
-  m_model.loadObj(assetsPath + "bunny.obj");
+  m_model.loadDiffuseTexture(assetsPath + "Skull.png");
+  m_model.loadNormalTexture(assetsPath + "Skull.png");
+  m_model.loadObj(assetsPath + "12140_Skull_v3_L2.obj");
   m_model.setupVAO(m_program);
+
+  // Use material properties from the loaded model
+  m_Ka = m_model.getKa();
+  m_Kd = m_model.getKd();
+  m_Ks = m_model.getKs();
+  m_shininess = m_model.getShininess();
 }
 
 void Window::onPaint() {
@@ -73,7 +81,7 @@ void Window::onPaint() {
 
   abcg::glUseProgram(m_program);
 
-  // GET Variables
+  // Get location of uniform variables
   auto const lightDirLoc{
       abcg::glGetUniformLocation(m_program, "lightDirWorldSpace")};
   auto const shininessLoc{abcg::glGetUniformLocation(m_program, "shininess")};
@@ -83,6 +91,10 @@ void Window::onPaint() {
   auto const KaLoc{abcg::glGetUniformLocation(m_program, "Ka")};
   auto const KdLoc{abcg::glGetUniformLocation(m_program, "Kd")};
   auto const KsLoc{abcg::glGetUniformLocation(m_program, "Ks")};
+  auto const diffuseTexLoc{abcg::glGetUniformLocation(m_program, "diffuseTex")};
+  auto const normalTexLoc{abcg::glGetUniformLocation(m_program, "normalTex")};
+  auto const mappingModeLoc{
+      abcg::glGetUniformLocation(m_program, "mappingMode")};
 
   // Set uniform variables for viewMatrix and projMatrix
   // These matrices are used for every scene object
@@ -90,6 +102,9 @@ void Window::onPaint() {
                            &m_camera.getViewMatrix()[0][0]);
   abcg::glUniformMatrix4fv(m_projMatrixLocation, 1, GL_FALSE,
                            &m_camera.getProjMatrix()[0][0]);
+  abcg::glUniform1i(diffuseTexLoc, 0);
+  abcg::glUniform1i(normalTexLoc, 1);
+  abcg::glUniform1i(mappingModeLoc, m_mappingMode);
 
   abcg::glUniform4fv(lightDirLoc, 1, &m_lightDir.x);
   abcg::glUniform4fv(IaLoc, 1, &m_Ia.x);
@@ -105,9 +120,11 @@ void Window::onPaint() {
 
   // Draw white bunny -> view matrix
   glm::mat4 model{1.0f};
-  model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 0.0f));
-  model = glm::rotate(model, glm::radians(m_rotation), glm::vec3(0, 1, 0));
-  model = glm::scale(model, glm::vec3(0.5f));
+  model = glm::translate(model, glm::vec3(-1.0f, 0.3f, 0.0f));
+  model = glm::rotate(model, glm::radians(270.0f), glm::vec3(1, 0, 0));
+  model = glm::rotate(model, glm::radians(m_rotation), glm::vec3(0, 0, 1));
+
+  model = glm::scale(model, glm::vec3(0.01f));
 
   abcg::glUniformMatrix4fv(m_modelMatrixLocation, 1, GL_FALSE, &model[0][0]);
 

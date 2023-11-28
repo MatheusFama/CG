@@ -69,157 +69,90 @@ void Window::onCreate() {
   // Lista com todas as configurações dos modelos
   allConfigs.clear();
 
-  auto const catPath = assetsPath + "cat.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.005f, catPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.2f, 0.45f, true, -90.0f,
+                        0.0005f, assetsPath + "/horse/10026_Horse_v01-it2.obj",
+                        false, randomSpeed(m_randomEngine), "",
+                        assetsPath + "/horse/Horse_v01.png", 3});
 
-  auto const bunnyPath = assetsPath + "bunny.obj";
-  allConfigs.push_back(
-      {glm::vec2(-1.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.15f, 0.45f, false, 0.0f, 0.1f, bunnyPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.2f, 0.45f, true, -90.0f,
+                        0.005f, assetsPath + "/duck/12248_Bird_v1_L2.obj",
+                        false, randomSpeed(m_randomEngine), "",
+                        assetsPath + "/duck/12248_Bird_v1_diff.png", 3});
 
-  auto const dogPath = assetsPath + "dog.obj";
   allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.005f, dogPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+      {glm::vec2(0.0f, 0.0f), 0.2f, 0.45f, false, -90.0f, 0.05f,
+       assetsPath + "/stone/Stone.obj", false, randomSpeed(m_randomEngine),
+       assetsPath + "/stone/normal.png", assetsPath + "/stone/rough.png", 3});
 
-  auto const dolphinPath = assetsPath + "dolphin.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.0035f, dolphinPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.2f, 0.45f, true, -90.0f,
+                        0.008f,
+                        assetsPath + "/dog/13463_Australian_Cattle_Dog_v3.obj",
+                        false, randomSpeed(m_randomEngine),
+                        assetsPath + "/dog/Australian_Cattle_Dog_bump.png",
+                        assetsPath + "/dog/Australian_Cattle_Dog_dif.png", 3});
 
-  auto const whalePath = assetsPath + "whale.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.3f, 0.55f, true, -90.0f, 0.001f, whalePath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.3f, 0.45f, false, -90.0f, 0.3f,
+                        assetsPath + "/cup/coffee_cup_obj.obj", false,
+                        randomSpeed(m_randomEngine),
+                        assetsPath + "/cup/normal.png",
+                        assetsPath + "/cup/Base_color.png", 3});
 
-  auto const pufferFishPath = assetsPath + "puffer_fish.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.3f, 0.55f, true, -90.0f, 0.01f, pufferFishPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.3f, 0.45f, false, -90.0f,
+                        0.05f, assetsPath + "/moon/Moon 2K.obj", false,
+                        randomSpeed(m_randomEngine),
+                        assetsPath + "/moon/Bump_2K.png",
+                        assetsPath + "/moon/Diffuse_2K.png", 3});
 
-  auto const dragonPath = assetsPath + "dragon.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.3f, 0.55f, false, -90.0f, 0.001f, dragonPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.25f, 0.45f, false, -90.0f,
+                        0.001f, assetsPath + "/roman_lamp/roman_lamp.obj",
+                        false, randomSpeed(m_randomEngine),
+                        assetsPath + "/roman_lamp/roman_lamp_normal.jpg",
+                        assetsPath + "/roman_lamp/roman_lamp_diffuse.jpg", 3});
 
-  auto const birdPath = assetsPath + "bird.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.01f, birdPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.15f, 0.45f, false, -90.0f,
+                        0.55f, assetsPath + "/wolf/Wolf_One_obj.obj", false,
+                        randomSpeed(m_randomEngine), "",
+                        assetsPath + "/wolf/Wolf_Body.jpg", 3});
 
-  auto const alienPath = assetsPath + "alien_dog.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.16f, 0.45f, false, -90.0f, 0.01f, alienPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.3f, 0.45f, false, -90.0f,
+                        0.05f, assetsPath + "/eye/eyeball.obj", false,
+                        randomSpeed(m_randomEngine), "",
+                        assetsPath + "/eye/Eye_D.jpg", 3});
 
-  auto const spider_monkeyPath = assetsPath + "spider_monkey.obj";
   allConfigs.push_back(
-      {glm::vec2(-1.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.0025f, spider_monkeyPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+      {glm::vec2(-1.0f, 0.0f), 0.2f, 0.45f, true, -90.0f, 0.0025f,
+       assetsPath + "/monkey/12958_Spider_Monkey_v1_l2.obj", false,
+       randomSpeed(m_randomEngine),
+       assetsPath + "/monkey/Map__3_Normal Bump.jpg",
+       assetsPath + "/monkey/12958_Spider_Monkey_diff.jpg", 3});
 
-  auto const humanPath = assetsPath + "humanbody.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, false, -90.0f, 0.08f, humanPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.2f, 0.45f, true, -90.0f, 0.01f,
+                        assetsPath + "/bird/12213_Bird_v1_l3.obj", false,
+                        randomSpeed(m_randomEngine),
+                        assetsPath + "/bird/Map__7_Normal Bump.jpg",
+                        assetsPath + "/bird/12213_bird_diffuse.jpg", 3});
 
-  auto const eyePath = assetsPath + "eyeball.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.3f, 0.45f, false, -90.0f, 0.05f, eyePath, false,
-       randomSpeed(m_randomEngine), 0.85});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.3f, 0.55f, true, -90.0f,
+                        0.001f, assetsPath + "/whale/10054_Whale_v2_L3.obj",
+                        false, randomSpeed(m_randomEngine), "",
+                        assetsPath + "/whale/10054_Whale_Diffuse_v2.jpg", 3});
 
-  auto const treePath = assetsPath + "tree.obj";
   allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.3f, 0.45f, false, -90.0f, 0.03f, treePath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+      {glm::vec2(0.0f, 0.0f), 0.2f, 0.45f, true, -90.0f, 0.0035f,
+       assetsPath + "/dolphin/10014_dolphin_v2_max2011_it2.obj", false,
+       randomSpeed(m_randomEngine), "",
+       assetsPath + "/dolphin/10014_dolphin_v1_Diffuse.png", 3});
 
-  auto const wolfPath = assetsPath + "wolf_one.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.15f, 0.45f, false, -90.0f, 0.55f, wolfPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.2f, 0.45f, true, -90.0f, 0.01f,
+                        assetsPath + "/skull/12140_Skull_v3_L2.obj", false,
+                        randomSpeed(m_randomEngine), "",
+                        assetsPath + "/skull/Skull.jpg", 3});
 
-  auto const skullPath = assetsPath + "skull.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.01f, skullPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
-
-  auto const handPath = assetsPath + "hand.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.01f, handPath, false,
-       randomSpeed(m_randomEngine), 1.0f});
-
-  auto const stonePath = assetsPath + "stone.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, false, -90.0f, 0.055f, stonePath, false,
-       randomSpeed(m_randomEngine), 1.0f});
-
-  auto const trex = assetsPath + "t_rex.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, false, -90.0f, 0.0005f, trex, false,
-       randomSpeed(m_randomEngine), 1.0f});
-
-  auto const horsePath = assetsPath + "horse.obj";
-  allConfigs.push_back(
-      {glm::vec2(0.0f, 0.0f),
-       glm::vec3(randomColor(m_randomEngine), randomColor(m_randomEngine),
-                 randomColor(m_randomEngine)),
-       0.2f, 0.45f, true, -90.0f, 0.0025f, horsePath, false,
-       randomSpeed(m_randomEngine), 1.0f});
+  allConfigs.push_back({glm::vec2(0.0f, 0.0f), 0.2f, 0.45f, true, -90.0f,
+                        0.005f, assetsPath + "/cat/12221_Cat_v1_l3.obj", false,
+                        randomSpeed(m_randomEngine),
+                        assetsPath + "/cat/Cat_bump.jpg",
+                        assetsPath + "/cat/Cat_diffuse.jpg", 3});
 
   auto si = (int)allConfigs.size() - 1;
   std::uniform_int_distribution randomPosition{0, si};
@@ -248,9 +181,9 @@ void Window::onCreate() {
 
   // Criando program
   m_program =
-      abcg::createOpenGLProgram({{.source = assetsPath + "phong.vert",
+      abcg::createOpenGLProgram({{.source = assetsPath + "normalmapping.vert",
                                   .stage = abcg::ShaderStage::Vertex},
-                                 {.source = assetsPath + "phong.frag",
+                                 {.source = assetsPath + "normalmapping.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
   base_program = abcg::createOpenGLProgram(

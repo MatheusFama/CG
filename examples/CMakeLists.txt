@@ -7,7 +7,7 @@
 # add_subdirectory(asteroids)
 # add_subdirectory(jumpingsquare)
 # add_subdirectory(loadmodel)
-# add_subdirectory(futuristicmuseum)
-add_subdirectory(lookat)
+ add_subdirectory(futuristicmuseum)
+#add_subdirectory(lookat)
 
 #add_subdirectory(museum)

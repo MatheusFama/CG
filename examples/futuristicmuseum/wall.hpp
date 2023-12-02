@@ -6,7 +6,7 @@
 class Wall {
 public:
   void create(GLuint program);
-  void paint();
+  void paint(glm::mat4 viewMatrix, glm::mat4 projMatrix);
   void destroy();
 
 private:
@@ -15,6 +15,8 @@ private:
   GLuint m_VBO{};
 
   GLint m_modelMatrixLoc{};
+  GLint m_viewMatrixLoc{};
+  GLint m_projMatrixLoc{};
   GLint m_colorLoc{};
 };
 

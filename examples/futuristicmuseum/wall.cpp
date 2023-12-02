@@ -29,10 +29,13 @@ void Wall::create(GLuint program) {
 
   // Save location of uniform variables
   m_modelMatrixLoc = abcg::glGetUniformLocation(program, "modelMatrix");
+  m_viewMatrixLoc = abcg::glGetUniformLocation(program, "viewMatrix");
+  m_projMatrixLoc = abcg::glGetUniformLocation(program, "projMatrix");
+
   m_colorLoc = abcg::glGetUniformLocation(program, "color");
 }
 
-void Wall::paint() {
+void Wall::paint(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
   abcg::glUseProgram(m_program);
 
   abcg::glBindVertexArray(m_VAO);
@@ -48,6 +51,8 @@ void Wall::paint() {
       model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0, 1, 0));
 
       abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+      abcg::glUniformMatrix4fv(m_viewMatrixLoc, 1, GL_FALSE, &viewMatrix[0][0]);
+      abcg::glUniformMatrix4fv(m_projMatrixLoc, 1, GL_FALSE, &projMatrix[0][0]);
 
       abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
 

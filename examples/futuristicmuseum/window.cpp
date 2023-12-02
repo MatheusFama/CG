@@ -186,7 +186,13 @@ void Window::onCreate() {
                                  {.source = assetsPath + "normalmapping.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
-  base_program = abcg::createOpenGLProgram(
+  base_program =
+      abcg::createOpenGLProgram({{.source = assetsPath + "phong.vert",
+                                  .stage = abcg::ShaderStage::Vertex},
+                                 {.source = assetsPath + "phong.frag",
+                                  .stage = abcg::ShaderStage::Fragment}});
+
+  groundWall_program = abcg::createOpenGLProgram(
       {{.source = assetsPath + "futuristicmuseum.vert",
         .stage = abcg::ShaderStage::Vertex},
        {.source = assetsPath + "futuristicmuseum.frag",
@@ -194,15 +200,11 @@ void Window::onCreate() {
 
   abcg::glClearColor(0, 0, 0, 1);
 
-  // Localizacao das variaveis uniformes
-  // m_viewMatrixLocation = abcg::glGetUniformLocation(m_program, "viewMatrix");
-  // m_projMatrixLocation = abcg::glGetUniformLocation(m_program, "projMatrix");
-
   auto const objBasePath = assetsPath + "cilindro.obj";
   m_collection.create(m_program, base_program, allConfigs, objBasePath);
 
-  m_ground.create(base_program);
-  m_wall.create(base_program);
+  m_ground.create(groundWall_program);
+  m_wall.create(groundWall_program);
 }
 
 void Window::onPaint() {
@@ -210,23 +212,12 @@ void Window::onPaint() {
 
   abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
 
-  // abcg::glUseProgram(m_program);
-
-  // Configurando as matrizes de projeçao e visao
-  // abcg::glUniformMatrix4fv(m_viewMatrixLocation, 1, GL_FALSE,
-  //                          &m_camera.getViewMatrix()[0][0]);
-  // abcg::glUniformMatrix4fv(m_projMatrixLocation, 1, GL_FALSE,
-  //                          &m_camera.getProjMatrix()[0][0]);
-
   // Desenhando a coleçao de obras
-  m_collection.paint(m_camera.getViewMatrix(), m_camera.getViewMatrix(),
-                     m_camera.getProjMatrix());
+  m_collection.paint(m_camera.getViewMatrix(), m_camera.getProjMatrix());
 
   // Desenhando o chao
-  m_ground.paint();
-  m_wall.paint();
-
-  // abcg::glUseProgram(0);
+  m_ground.paint(m_camera.getViewMatrix(), m_camera.getProjMatrix());
+  m_wall.paint(m_camera.getViewMatrix(), m_camera.getProjMatrix());
 }
 
 void Window::onPaintUI() { abcg::OpenGLWindow::onPaintUI(); }
@@ -237,12 +228,9 @@ void Window::onResize(glm::ivec2 const &size) {
 }
 
 void Window::onDestroy() {
-
-  // m_ground.destroy();
-  // m_wall.destroy();
-
+  m_ground.destroy();
+  m_wall.destroy();
   m_collection.destroy();
-
   abcg::glDeleteProgram(m_program);
 }
 

@@ -27,6 +27,7 @@ private:
 
   GLuint m_program{};
   GLuint base_program{};
+  GLuint groundWall_program{};
 
   GLint m_viewMatrixLocation{};
   GLint m_projMatrixLocation{};

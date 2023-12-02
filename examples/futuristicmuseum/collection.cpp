@@ -28,8 +28,7 @@ void Collection::create(GLuint program, GLuint base_program,
   b_projMatrixLocation = abcg::glGetUniformLocation(b_program, "projMatrix");
 }
 
-void Collection::paint(glm::mat4 m_viewMatrix, glm::mat4 viewMatrix,
-                       glm::mat4 projMatrix) {
+void Collection::paint(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
 
   abcg::glUseProgram(m_program);
 
@@ -40,7 +39,7 @@ void Collection::paint(glm::mat4 m_viewMatrix, glm::mat4 viewMatrix,
                            &projMatrix[0][0]);
 
   for (auto &estatue : m_estatues) {
-    estatue.paint(m_viewMatrix);
+    estatue.paint(viewMatrix);
   }
 
   abcg::glUseProgram(0);
@@ -54,7 +53,7 @@ void Collection::paint(glm::mat4 m_viewMatrix, glm::mat4 viewMatrix,
                            &projMatrix[0][0]);
 
   for (auto &base : m_bases) {
-    base.paint();
+    base.paint(viewMatrix);
   }
   abcg::glUseProgram(0);
 }

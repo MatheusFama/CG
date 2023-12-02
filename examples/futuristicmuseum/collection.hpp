@@ -12,8 +12,7 @@ public:
   void create(GLuint program, GLuint base_program,
               std::vector<ObjectConfiguration> configs,
               std::string_view basePath);
-  void paint(glm::mat4 m_viewMatrix, glm::mat4 viewMatrix,
-             glm::mat4 projMatrix);
+  void paint(glm::mat4 m_viewMatrix, glm::mat4 projMatrix);
   void update(float deltaTime);
   void destroy();
 

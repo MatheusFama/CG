@@ -29,10 +29,13 @@ void Ground::create(GLuint program) {
 
   // Save location of uniform variables
   m_modelMatrixLoc = abcg::glGetUniformLocation(program, "modelMatrix");
+  m_viewMatrixLoc = abcg::glGetUniformLocation(program, "viewMatrix");
+  m_projMatrixLoc = abcg::glGetUniformLocation(program, "projMatrix");
+
   m_colorLoc = abcg::glGetUniformLocation(program, "color");
 }
 
-void Ground::paint() {
+void Ground::paint(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
   abcg::glUseProgram(m_program);
 
   abcg::glBindVertexArray(m_VAO);
@@ -46,6 +49,8 @@ void Ground::paint() {
       glm::mat4 model{1.0f};
       model = glm::translate(model, glm::vec3(x, 0.0f, z));
       abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
+      abcg::glUniformMatrix4fv(m_viewMatrixLoc, 1, GL_FALSE, &viewMatrix[0][0]);
+      abcg::glUniformMatrix4fv(m_projMatrixLoc, 1, GL_FALSE, &projMatrix[0][0]);
 
       if (x == 0) {
         // Set color (checkerboard pattern)

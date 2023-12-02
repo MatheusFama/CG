@@ -43,7 +43,7 @@ void Wall::paint() {
     for (auto const y : iter::range(-N, N + 1)) {
       // Set model matrix as a translation matrix
       glm::mat4 model{1.0f};
-      model = glm::translate(model, glm::vec3(x, y, 5.0f));
+      model = glm::translate(model, glm::vec3(x, y, 4.0f));
       // rotacionando modelo pois o modelo original está no espaço yz
       model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0, 1, 0));
 
@@ -60,7 +60,7 @@ void Wall::paint() {
     for (auto const y : iter::range(-N, N + 1)) {
       // Set model matrix as a translation matrix
       glm::mat4 model{1.0f};
-      model = glm::translate(model, glm::vec3(x, y, -5.0f));
+      model = glm::translate(model, glm::vec3(x, y, -4.0f));
       // rotacionando modelo pois o modelo original está no espaço yz
       model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0, 1, 0));
 
@@ -77,7 +77,7 @@ void Wall::paint() {
     for (auto const y : iter::range(-N, N + 1)) {
       // Set model matrix as a translation matrix
       glm::mat4 model{1.0f};
-      model = glm::translate(model, glm::vec3(5.0f, y, z));
+      model = glm::translate(model, glm::vec3(4.0f, y, z));
       abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
 
       abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
@@ -91,7 +91,7 @@ void Wall::paint() {
     for (auto const y : iter::range(-N, N + 1)) {
       // Set model matrix as a translation matrix
       glm::mat4 model{1.0f};
-      model = glm::translate(model, glm::vec3(-5.0f, y, z));
+      model = glm::translate(model, glm::vec3(-4.0f, y, z));
       abcg::glUniformMatrix4fv(m_modelMatrixLoc, 1, GL_FALSE, &model[0][0]);
 
       abcg::glUniform4f(m_colorLoc, 0.5f, 0.5f, 0.5f, 1.0f);
